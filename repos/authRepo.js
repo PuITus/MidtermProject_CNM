@@ -22,8 +22,6 @@ exports.generateAccessToken = userEntity => {
 
 exports.verifyAccessToken = (req, res, next) => {
     var token = req.headers['x-access-token'];
-    
-
     if (token) {
         jwt.verify(token, SECRET, (err, payload) => {
             if (err) {
@@ -44,6 +42,21 @@ exports.verifyAccessToken = (req, res, next) => {
         })
     }
 }
+exports.verifyAccessTokenWS = (token,cb) => {
+        jwt.verify(token, SECRET, (err, payload) => {
+            if (err) {
+                cb(err);
+            } else {
+             cb(null,payload);
+            }
+        });
+}
+
+
+
+
+
+
 
 exports.generateRefreshToken = () => {
     const SIZE = 80;

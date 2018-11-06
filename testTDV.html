@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WebSocket</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<ul id="list"></ul>
+	<script id="template" type="text/x-handlebars-template">
+		{{#each this}}
+			<li>{{name}}</li>
+		{{/each}}
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<script type="text/javascript">
+		window.onload = function() {
+			setupWS();
+			msg = {
+			 type: 'push',
+                payload: { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7IklEIjoxLCJVc2VybmFtZSI6ImFkbWluIiwiTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiIyMTIzMmYyOTdhNTdhNWE3NDM4OTRhMGU0YTgwMWZjMyIsIkFjY291bnRUeXBlX0lEIjoxLCJTdGF0dXMiOjF9LCJpbmZvIjoibW9yZSBpbmZvIiwiaWF0IjoxNTQxNTIzOTkyLCJleHAiOjE1NDE1MjQ1OTJ9.MzMRBKhis08yHJsYIGZhLuf2Sofj7i4kVczbOjHcEQo' }
+                };
+				ws.send(JSON.stringify(msg));
+		}
+
+		var setupWS = function(done) {
+            window.WebSocket = window.WebSocket || window.MozWebSocket;
+           
+			var ws = new WebSocket('ws://localhost:3001');
+                    
+            ws.onopen = function(event) {
+               
+            };
+			ws.onopen = function() {
+				console.log('connected');
+				//Data khi authen
+                var msg = {
+                type: 'authenticate',
+                payload: { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7IklEIjoxLCJVc2VybmFtZSI6ImFkbWluIiwiTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiIyMTIzMmYyOTdhNTdhNWE3NDM4OTRhMGU0YTgwMWZjMyIsIkFjY291bnRUeXBlX0lEIjoxLCJTdGF0dXMiOjF9LCJpbmZvIjoibW9yZSBpbmZvIiwiaWF0IjoxNTQxNTIzOTkyLCJleHAiOjE1NDE1MjQ1OTJ9.MzMRBKhis08yHJsYIGZhLuf2Sofj7i4kVczbOjHcEQo' }
+                };
+				ws.send(JSON.stringify(msg));
+				//Data khi push request lên
+				// msg = {
+                // type: 'push',
+				// payload: { name: "test", adress: "test" , phone: "test",note: "test" };
+				// ws.send(JSON.stringify(msg));
+			}
+			
+			ws.onmessage = function(e) {
+				console.log(e.data);
+			}
+			done(ws);
+		}
+
+	
+	</script>
+</body>
+</html>

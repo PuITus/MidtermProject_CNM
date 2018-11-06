@@ -1,0 +1,4 @@
+- ID loại người dùng:
+    1 : Tổng đài viên
+    2 : 
+    3 :

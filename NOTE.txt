@@ -2,3 +2,25 @@
     1 : Tổng đài viên
     2 : 
     3 :
+
+
+
+
+==========================================
+=======Tổng đài viên======================
+==========================================
+-  authenticate:    var msg = {
+                type: 'authenticate',
+                payload: { Token: 'token nhap vao' }
+                };
+- Gửi request xe lên server:   var msg = {
+                type: 'push',
+                payload: { Request: {Name:"OK",   Phone:"admin3",Adress:"adress",Note:"note"} }
+                };
+- Sau khi gửi lên server gửi về : var msg = {
+                    type: 'success',
+                    payload: { Request: requestEntity}};
+- khi có lỗi server  ngắt kết nối và gửi về:  var msg = {
+                    type: 'error',
+                    payload: { message: "Lỗi abc xyz"}};
+ 

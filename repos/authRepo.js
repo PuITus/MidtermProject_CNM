@@ -1,11 +1,11 @@
 var jwt = require('jsonwebtoken');
 var rndToken = require('rand-token');
 var moment = require('moment');
-
+var Config = require('../config');
 var db = require('../fn/mysql-db');
 
 const SECRET = 'ABCDEF';
-const AC_LIFETIME = 600; // seconds
+const AC_LIFETIME = 6000; // seconds
 
 exports.generateAccessToken = userEntity => {
     var payload = {

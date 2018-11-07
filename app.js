@@ -19,14 +19,15 @@ app.use(cors());
 
 app.get('/', (req, res) => {
     res.json({
-        msg: 'hello from nodejs express api'
+        msg: 'Hello Uberman!!!'
     })
 });
 
-app.use('/api/requests/',verifyAccessToken, requestCtrl);
+app.use('/api/requests/', requestCtrl);
 app.use('/api/users/', userCtrl);
-require('./TDVws')
 
+require('./websockets/TDVws');
+require('./websockets/DVVws');
 
 var port = process.env.PORT || 3000;
 app.listen(port, () => {

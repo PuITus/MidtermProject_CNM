@@ -15,45 +15,53 @@
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 	<script type="text/javascript">
-		window.onload = function() {
-			setupWS();
-			msg = {
-			 type: 'push',
-                payload: { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7IklEIjoxLCJVc2VybmFtZSI6ImFkbWluIiwiTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiIyMTIzMmYyOTdhNTdhNWE3NDM4OTRhMGU0YTgwMWZjMyIsIkFjY291bnRUeXBlX0lEIjoxLCJTdGF0dXMiOjF9LCJpbmZvIjoibW9yZSBpbmZvIiwiaWF0IjoxNTQxNTIzOTkyLCJleHAiOjE1NDE1MjQ1OTJ9.MzMRBKhis08yHJsYIGZhLuf2Sofj7i4kVczbOjHcEQo' }
-                };
-				ws.send(JSON.stringify(msg));
-		}
-
-		var setupWS = function(done) {
-            window.WebSocket = window.WebSocket || window.MozWebSocket;
+		var ws;
+		function sendRequest() 
+			{
+				var a = setInterval(function(){
+			  
+			    if(ws.readyState == 1)
+			    {
+					console.log("Ready for user!");
+					var msg = {
+					type: 'push',
+					payload: { Request: {Name:"OKKK", Phone:"admin3",Adress:"London",Note:"note"} }
+					};
+					ws.send(JSON.stringify(msg));
+					
+  					clearInterval(a);
+			    }
+			    else
+			    {
+			    	  console.log("loading...");
+			    		    console.log(ws.readyState);
+			    }		  
+				}, 500);
+			}
+	 window.WebSocket = window.WebSocket || window.MozWebSocket;
            
-			var ws = new WebSocket('ws://localhost:3001');
-                    
-            ws.onopen = function(event) {
-               
-            };
+			ws = new WebSocket('ws://localhost:3001');
 			ws.onopen = function() {
 				console.log('connected');
 				//Data khi authen
                 var msg = {
                 type: 'authenticate',
-                payload: { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7IklEIjoxLCJVc2VybmFtZSI6ImFkbWluIiwiTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiIyMTIzMmYyOTdhNTdhNWE3NDM4OTRhMGU0YTgwMWZjMyIsIkFjY291bnRUeXBlX0lEIjoxLCJTdGF0dXMiOjF9LCJpbmZvIjoibW9yZSBpbmZvIiwiaWF0IjoxNTQxNTIzOTkyLCJleHAiOjE1NDE1MjQ1OTJ9.MzMRBKhis08yHJsYIGZhLuf2Sofj7i4kVczbOjHcEQo' }
+                payload: { Token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7IklEIjoxLCJVc2VybmFtZSI6ImFkbWluIiwiTmFtZSI6ImFkbWluIiwiUGFzc3dvcmQiOiIyMTIzMmYyOTdhNTdhNWE3NDM4OTRhMGU0YTgwMWZjMyIsIkFjY291bnRUeXBlX0lEIjoxLCJTdGF0dXMiOjF9LCJpbmZvIjoibW9yZSBpbmZvIiwiaWF0IjoxNTQxNTc5OTcyLCJleHAiOjE1NDE1ODU5NzJ9.5VwLMmU8oIre2XOaA16z37DFls_dx1nWDdVCcOYIH-Y' }
                 };
 				ws.send(JSON.stringify(msg));
+				
+
 				//Data khi push request lên
-				// msg = {
-                // type: 'push',
-				// payload: { name: "test", adress: "test" , phone: "test",note: "test" };
-				// ws.send(JSON.stringify(msg));
+			
 			}
 			
 			ws.onmessage = function(e) {
 				console.log(e.data);
 			}
-			done(ws);
-		}
+           
 
 	
 	</script>
+	<button type="button" onclick="sendRequest()" class="btn btn-default">button</button>
 </body>
 </html>

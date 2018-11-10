@@ -12,7 +12,12 @@ exports.setStatus = (ID,Status) => {
 	var sql = `
     UPDATE requests
 SET Status = '${Status}' WHERE ID = '${ID}';`;
-console.log(sql);
+	return db.load(sql);
+}
+exports.setDriver = (ID,Driver_ID) => {
+	var sql = `
+    UPDATE requests
+SET Status = '3', Driver_ID = '${Driver_ID}' WHERE ID = '${ID}';`;
 	return db.load(sql);
 }
 exports.load = () => {

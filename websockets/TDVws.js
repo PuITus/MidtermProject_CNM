@@ -77,7 +77,7 @@ if (!socketServer) {
                 return;
             }
           else 
-          {
+          { 
               //Kiểm tra loại tài khoản 
               if(payload.user)
               {
@@ -111,7 +111,7 @@ if (!socketServer) {
                     }
                     requestRepo.add(requestEntity).then(value=>
                         {
-                            DVVws.addUnlocatedRequest(requestEntity);
+                            // DVVws.addUnlocatedRequest(requestEntity);
                         });
                         var msg = {
                             type: 'success',
@@ -137,7 +137,7 @@ if (!socketServer) {
       
     });
 
-    console.log(`WS running on port ${SOCKET_PORT}`);
+    console.log(`TDV running on port ${SOCKET_PORT}`);
 }
 
 var broadcastAll = msg => {

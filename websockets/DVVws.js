@@ -7,7 +7,7 @@ var SOCKET_PORT = 3002;
 var socketServer;
 var clients = 0;
 var maxClient = Config.DVV;
-
+var TXws = require('../websockets/TXws');
  
 
 
@@ -35,7 +35,6 @@ if (!socketServer) {
                     payload: Data};
                 ws.send(JSON.stringify(msg));
               }  
-       
       }
     function toEvent (message) {
         try {
@@ -105,20 +104,30 @@ if (!socketServer) {
                   return;
                 }
                 else 
-                {   ws.user = payload.user;
+                { //Authenticate thanh cong!
+                    ws.user = payload.user;
                     ws.authenticate = 1; 
                     clearTimeout(checkA);
 
                     requestRepo.getUnlocated().then(rows=>
                         {
-                            requestRepo.setStatus(rows[0].ID,'1').then(
-                                result => {
-                                    ws.currentRequest = rows[0].ID;
-                                    var Data = {
-                                        Request : rows[0]
-                                    }
-                                    sendSuccess(ws,Data);
-                                })
+                            if(rows)
+                            {
+                                requestRepo.setStatus(rows[0].ID,'1').then(
+                                    result => {
+                                        ws.currentRequest = rows[0].ID;
+                                        var Data = {
+                                            Request : rows[0]
+                                        }
+                                        sendSuccess(ws,Data);
+                                    })
+                            }
+                            else{
+                                
+                                
+                                
+                            }
+                           
                        
                         })
                    
@@ -128,13 +137,13 @@ if (!socketServer) {
         }); })
         .on('push', function (data) {
       
-          try {
-           
-            requestRepo.updateAttitude(data.Latitude,data.Longitude,data.ID).then(value=>
+          try { 
+            requestRepo.updateAttitude(data.Latitude,data.Longitude,ws.currentRequest).then(value=>
                 {
-                    requestRepo.setStatus(data.ID,2).then(
-                        result=>
+                    requestRepo.getByID(ws.currentRequest).then( request =>
                         {
+                            request[0].Times = 0;
+                            TXws.findDriver(request[0]);
                             requestRepo.getUnlocated().then(rows=>
                                 {
                                     requestRepo.setStatus(rows[0].ID,'1').then(
@@ -144,10 +153,12 @@ if (!socketServer) {
                                                 Request : rows[0]
                                             }
                                             sendSuccess(ws,Data);
+                                      
                                         })
                                
-                                })
-                        })
+                                })       
+                        } )
+                   
                 });
                          
           }
@@ -169,7 +180,7 @@ if (!socketServer) {
       
     });
 
-    console.log(`WS running on port ${SOCKET_PORT}`);
+    console.log(`DVV running on port ${SOCKET_PORT}`);
 }
 var broadcastAll = msg => {
     for (var c of socketServer.clients) {

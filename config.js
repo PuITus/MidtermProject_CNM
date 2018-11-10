@@ -1,4 +1,5 @@
 module.exports = {
-	TDV: 2 ,
-	DVV: 2
+	TDV: 3 ,
+	DVV: 3 ,
+	TX: 4 //So luot tim tai xe toi da
 }

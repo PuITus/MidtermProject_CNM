@@ -2,7 +2,13 @@
     1 : Tổng đài viên
     2 : 
     3 :
-
+- status request:
+    0: moi khoi tao
+    1: dang dinh vi
+    2: da dinh vi
+    3: da duoc accept
+    4: done
+    5: tim khong thay xe
 
 
 

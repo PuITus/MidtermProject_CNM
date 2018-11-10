@@ -4,7 +4,8 @@ var db = require('../fn/mysql-db');
 
 exports.add = userEntity => {
     var md5_pwd = md5(userEntity.Password);
-    var sql = `insert into users(Username, Password, Name, AccountType_ID, Status) values('${userEntity.Username}', '${md5_pwd}'),'${userEntity.Name}','${userEntity.AccountType_ID}','${userEntity.Status}')`;
+    var sql = `insert into users(Username, Password, Name, AccountType_ID, Status) values('${userEntity.Username}', '${md5_pwd}','${userEntity.Name}','${userEntity.AccountType_ID}','${userEntity.Status}')`;
+    console.log(sql);
     return db.insert(sql);
 }
 

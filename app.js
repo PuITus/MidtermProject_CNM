@@ -28,8 +28,11 @@ app.use('/api/users/', userCtrl);
 
 require('./websockets/TDVws');
 require('./websockets/DVVws');
-
+require('./websockets/TXws');
 var port = process.env.PORT || 3000;
+
+
+
 app.listen(port, () => {
     console.log(`Uber API is running on port ${port}`);
 })

@@ -5,7 +5,7 @@
     <div class="container">
   <div class="row">
     <div class="col-md-4 login-sec">
-        <h2 class="text-center">Request receiver Login</h2>
+        <h2 class="text-center">Uber System - Login</h2>
         <form @submit.prevent="doLogin" class="login-form">
   <div class="form-group">
     <label class="text-uppercase">Username</label>
@@ -17,7 +17,7 @@
     <input v-model="password"  type="password" class="form-control" placeholder="">
   </div>
   <div v-if="fail" class="alert alert-danger">
-  <strong>Oops!</strong> your infomation is wrong!!
+  <strong>Oops!</strong> {{error}}
 </div>
   
     <div class="form-check">
@@ -26,7 +26,7 @@
   </div>
   
 </form>
-<div class="copy-text">Request receiver App <i class="fa fa-heart"></i> by Uber</div>
+<div class="copy-text">Uber System App <i class="fa fa-heart"></i> by Uber</div>
     </div>
     <div class="col-md-8 banner-sec">
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -90,6 +90,7 @@ export default {
   name: 'login-box',
   data () {
     return {  username: '',
+      error: '',
       password: '',
       hidePassword: true,
       fail: false,
@@ -128,25 +129,57 @@ export default {
                 }).then(value=>
                 {
                   if(auth.auth)
-                  {this.$root.auth = auth;
-                    this.fail = false;
-                    this.$router.push('uber');
+                  {
+                    switch(auth.user.AccountType_ID)
+                    {
+                      case 1:
+                                        this.$root.auth = auth;
+                                        this.fail = false;
+                                        this.$router.push('Receiver');
+                                        break;
+                      case 2:
+                                        this.$root.auth = auth;
+                                        this.fail = false;
+                                        this.$router.push('Identifier');
+                                        break;
+                      default:
+                      this.error = "Something was wrong, pls login again!"
+                    this.fail = true;
+                    this.username ="";
+                     this.password="";
+                      break;
+                    }            
                   } else 
                   {
+                    this.error = "Your infomation was wrong!!"
                     this.fail = true;
                   this.username ="";
                   this.password="";
                   }
                 });
-
          }   
     },created()
     {
       if(this.$root.auth != false)
       {
-        alert("Already logged in!!");
-         this.$router.push('uber');
-      }
+        switch(this.$root.auth .user.AccountType_ID)
+                    {
+                      case 1:
+                                        this.$router.push('Receiver');
+                      case 2:
+                                        this.$router.push('Identifier');
+                      break;
+                      default:
+                      this.error = "Something was wrong, pls login again!"
+                    this.fail = true;
+                    this.username ="";
+                     this.password="";
+                      break;
+                    }            
+
+      };
+
+
     },
     mounted()
     {
@@ -157,11 +190,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style >
 .login-block{
-  padding : 60px 0;
+  margin-top:5%;
 }
-.banner-sec{background:url(https://static.pexels.com/photos/33972/pexels-photo.jpg)  no-repeat left bottom; background-size:cover; min-height:500px; border-radius: 0 10px 10px 0; padding:0;}
+.banner-sec{background:url(https://static.pexels.com/photos/33972/pexels-photo.jpg)  no-repeat left bottom; background-size:cover;  border-radius: 0 10px 10px 0; padding:0;}
 .container{background:#fff; border-radius: 10px; box-shadow:15px 20px 0px rgba(0,0,0,0.1);}
 .carousel-inner{border-radius:0 10px 10px 0;}
 .carousel-caption{text-align:left; left:5%;}

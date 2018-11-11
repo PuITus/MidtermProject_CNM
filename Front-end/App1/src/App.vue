@@ -10,6 +10,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'app'
 }
@@ -17,8 +18,7 @@ export default {
 <!-- styling for the component -->
 <style >
 body{
-background: linear-gradient(to bottom, #FFB88C, #DE6262); 
-width:100%;
+background: linear-gradient(to bottom, #FFB88C, #DE6262)  center fixed; 
 
 }
 </style>

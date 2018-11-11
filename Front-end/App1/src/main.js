@@ -9,20 +9,20 @@ import VueRouter from 'vue-router'
 //tell vue to use the router
 Vue.use(VueRouter)
 /* eslint-disable no-new */
-//import the hello component
-import Hello from './components/Hello'
-//import the about component
-import Uber from './components/Uber'
-import Login from './components/Login'
 
-require('../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss');
+
+import Hello from './components/Hello'
+import Login from './components/Login'
+import Receiver from './components/Receiver'
+import Identifier from './components/Identifier'
+
 //define your routes
 const routes = [
-	//route for the home route of the webpage
-	{ path: '/', component: Hello },
-	//route for the about route of the webpage
-	{ path: '/uber', component: Uber },
-  { path: '/login', component: Login }
+
+	{ path: '/', component: Login },
+  { path: '/login', component: Login },
+	{ path: '/receiver', component: Receiver },
+  { path: '/identifier', component: Identifier }
 ]
 
 // Create the router instance and pass the `routes` option

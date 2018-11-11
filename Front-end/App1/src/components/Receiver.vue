@@ -4,19 +4,24 @@
             <div class="contact-image">
                 <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
             </div>
+
              <div class="float-right">
                <div  class="alert alert-default">Hello 
   <strong>{{this.$root.auth.user.Name}} !!!</strong> 
-    <button type="button" class="btn btn-danger">Logout</button>
+    <button  v-on:click="logout"type="button" class="btn btn-danger">Logout</button>
 </div>
             
-
+  
                      </div>
-
-             
-            <form @submit.prevent="sendRequest">
-                <h3>REQUEST RECEIVER</h3>
+  
+          
+            <form id = "requestfrm" @submit.prevent="sendRequest">
+        <div >
+          <div class="col-md-12">
+               <h3 style="text-align:center;margin-bottom:5%" class="text-uppercase mt-3 font-weight-bold"> REQUEST RECEIVER </h3></div>
+            </div>
                <div class="row">
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <input  v-model="request.Name" type="text" name="txtName" class="form-control" placeholder="Name *" value="" required />
@@ -33,30 +38,51 @@
                         <div class="form-group">
                             <textarea v-model="request.Adress" name="txtAdress" class="form-control" placeholder="Request adress *" style="width: 100%; height: 150px;"required></textarea>
                         </div>
+                    
                     </div>
-                    <div class="col-md-12">
-                        <input type="submit" name="btnSubmit" class="col-md-offset-4 col-md-4 btnContact" value="Send Message" />
+                    
+                     <div  style="margin-top:20px" class="col-md-12">
+                       <transition name="fade">
+                          <div id="notifications" v-if="success" class=" alert alert-success">
+                       
+                            <strong>Success!</strong> </br>
+                          <strong>Name: </strong> {{successrq.Name}}                          <strong>Adress: </strong> {{successrq.Adress}}</br>
+                        </div>
+                         </transition>
+                    </div>
+                   <div class="col-md-12">
+                        <input type="submit" name="btnSubmit" class=" offset-md-8 col-md-4 btnContact" value="Send Request" />
                     </div>
                 </div>
+
             </form>
+
 </div>
 </template>
 
 <script>
 export default {
-  name: 'uber',
+  name: 'Receiver',
   data() {
     return {
-    request: {Name : "",
-    Phone: "",
-    Note: "",
-    Adress: "",}
+        request: {Name : "",
+        Phone: "",
+        Note: "",
+        Adress: "",},
+    success: false,
+        successrq:
+        {Name : "",
+        Phone: "",
+        Note: "",
+        Adress: "",}
   }
   } ,
   methods: {
-    greet: function (event) {
-      // `this` inside methods point to the Vue instance
-     
+    logout: function (event) {
+      this.$root.auth = false;
+        this.$root.ws.close();
+      this.$root.ws = false;
+      this.$router.push('login');
     },
 
       sendRequest:  function () 
@@ -72,7 +98,6 @@ export default {
           type: 'push',
           payload: { Request: {Name:request.Name, Phone:request.Phone,Adress:request.Adress,Note:request.Note} }
           };
-          console.log(msg);
           ws.send(JSON.stringify(msg));
           
             clearInterval(a);
@@ -98,8 +123,8 @@ export default {
     {
           if(this.$root.auth)
     {
+      var vm = this;
       window.WebSocket = window.WebSocket || window.MozWebSocket;
-               
           var ws = new WebSocket('ws://localhost:3001');
           var Token = this.$root.auth.access_token;
           ws.onopen = function() {
@@ -115,9 +140,26 @@ export default {
             //Data khi push request lên
           
           }
-          
+
+         
           ws.onmessage = function(e) {
-            console.log(e.data);
+            var msg = JSON.parse(e.data);
+            var data = msg.payload;
+            var type=msg.type;
+                        switch(type){
+                case "success":
+                   vm.successrq = data.Request;
+                   vm.request.Name ="";
+                   vm.request.Phone="";
+                   vm.request.Adress="";
+                   vm.request.Note="";
+                     vm.success =true;
+                     setTimeout(function (){ vm.success =false; }, 3000);
+                   break;
+                default:
+                break;
+            }
+           
           }
           this.$root.ws = ws;
 
@@ -127,12 +169,27 @@ export default {
 }
 </script>
 <!-- styling for the component -->
-<style>
+<style >
+#notifications {
+    word-wrap: break-word;
+    max-width: 450px;
+    min-width: 350px;
+    text-align: center;
+    position: fixed;
+    z-index: 1000;
+    right: 10px;
+    bottom: 80px;
 
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 .contact-form{
     background: #fff;
-    margin-top: 10%;
-    margin-bottom: 5%;
+    margin-top: 5%;
     width: 70%;
 }
 .contact-form .form-control{
@@ -148,19 +205,14 @@ export default {
     transform: rotate(29deg);
 }
 .contact-form form{
-    padding: 14%;
+    padding: 12%;
+    padding-top:8%;
 }
 .contact-form form .row{
     margin-bottom: -7%;
 }
-.contact-form h3{
-    margin-bottom: 8%;
-    margin-top: -10%;
-    text-align: center;
-    color: #0062cc;
-}
+
 .contact-form .btnContact {
-    width: 50%;
     border: none;
     border-radius: 1rem;
     padding: 1.5%;
@@ -171,7 +223,7 @@ export default {
 }
 .btnContactSubmit
 {
-    width: 50%;
+   
     border-radius: 1rem;
     padding: 1.5%;
     color: #fff;

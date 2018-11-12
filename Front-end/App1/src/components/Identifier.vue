@@ -21,7 +21,7 @@
              <div class="float-right">
                <div  class="alert alert-default">Hello 
   <strong>{{this.$root.auth.user.Name}} !!!</strong> 
-    <button  v-on:click="logout"type="button" class="btn btn-danger">Logout</button>
+    <button  v-on:click="logout" type="button" class="btn btn-danger">Logout</button>
 </div>
             
   
@@ -73,9 +73,9 @@
             <transition name="fade">
                           <div id="notifications" v-if="success" class=" alert alert-success">
                        
-                            <strong>Success!</strong> </br>
+                            <strong>Success!</strong> <br>
                           <strong>Name: </strong> {{successrq.Name}}                          
-                          <strong>Adress: </strong> {{successrq.Adress}}</br>
+                          <strong>Adress: </strong> {{successrq.Adress}}<br>
                         </div>
                          </transition>
           </div>

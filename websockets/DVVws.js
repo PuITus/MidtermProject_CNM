@@ -29,7 +29,6 @@ if (!socketServer) {
       function sendSuccess (ws,Data) {
         if(ws.readyState === WebSocket.OPEN)
               {
-
                 var msg = {
                     type: 'success',
                     payload: Data};
@@ -59,7 +58,7 @@ if (!socketServer) {
         ws.currentRequest = -1;
         clients++;
         ws.authenticate = 0;
-        // Kiểm tra đã xác thực chưa 
+        ws.ready=1; //0 = waiting, 1 = ok dont worry me!.
         const checkA = setTimeout(()=>{
             if(ws.readyState === WebSocket.OPEN)
               {
@@ -111,8 +110,9 @@ if (!socketServer) {
 
                     requestRepo.getUnlocated().then(rows=>
                         {
-                            if(rows)
+                            if(rows.length>0)
                             {
+                                console.log("VAN CON!");
                                 requestRepo.setStatus(rows[0].ID,'1').then(
                                     result => {
                                         ws.currentRequest = rows[0].ID;
@@ -121,23 +121,25 @@ if (!socketServer) {
                                         }
                                         sendSuccess(ws,Data);
                                     })
+                                    ws.ready=1;
                             }
                             else{
-                                
-                                
+                                console.log("Het roi!");
+                                sendSuccess(ws,"");
+                                ws.currentRequest = -1;
+                                ws.ready =0;
                                 
                             }
                            
                        
                         })
-                   
-                }
+                    }
               }
           }
         }); })
         .on('push', function (data) {
       
-          try { 
+     
             requestRepo.updateAttitude(data.Latitude,data.Longitude,ws.currentRequest).then(value=>
                 {
                     requestRepo.getByID(ws.currentRequest).then( request =>
@@ -146,32 +148,44 @@ if (!socketServer) {
                             TXws.findDriver(request[0]);
                             requestRepo.getUnlocated().then(rows=>
                                 {
-                                    requestRepo.setStatus(rows[0].ID,'1').then(
-                                        varr => {
-                                            ws.currentRequest = rows[0].ID;
-                                            var Data = {
-                                                Request : rows[0]
-                                            }
-                                            sendSuccess(ws,Data);
-                                      
-                                        })
-                               
+                                    if(rows.length>0)
+                                    {
+                                        requestRepo.setStatus(rows[0].ID,'1').then(
+                                            varr => {
+                                                ws.currentRequest = rows[0].ID;
+                                                var Data = {
+                                                    Request : rows[0]
+                                                }
+                                                sendSuccess(ws,Data);
+                                            })
+                                            ws.ready=1;
+                                    }
+                                    else{
+                                        sendSuccess(ws,"");
+                                        ws.currentRequest = -1;
+                                        ws.ready=0;
+                                    }
                                 })       
                         } )
                    
                 });
                          
-          }
-          catch(error) {
-            console.error(error);
-          }
+         
 
         });
 
         ws.on('close', msg => {
+        
             if(ws.currentRequest !=-1)
             {
-                requestRepo.setStatus(ws.currentRequest,0);
+               
+                requestRepo.setStatus(ws.currentRequest,0).then(
+                    value => {
+                        addUnlocatedRequest();
+                    }
+                );
+                ws.currentRequest = -1;
+              
             }
             clients--;
             console.log(`close DVV (${clients} is online)`);
@@ -190,9 +204,36 @@ var broadcastAll = msg => {
         }
     }
 }
+var addUnlocatedRequest = () =>
+{
+    requestRepo.getUnlocated().then(rows=>
+        {
+            if(rows.length>0)
+            {
+                for (var c of socketServer.clients) {
+                    console.log(c.ready);
+                    if (c.readyState === WebSocket.OPEN && c.ready==0) {
+                       
 
+                        requestRepo.setStatus(rows[0].ID,'1').then(
+                            varr => {
+                                c.currentRequest = rows[0].ID;
+                                var Data = {
+                                    Request : rows[0]
+                                }
+                                sendSuccess(c,Data);
+                            })
+                            c.ready=1;
+                        break;
+                    }
+                }
+            }
+           
+       
+        });
+}
 module.exports = {
-
+    addUnlocatedRequest,
     socketServer,
     broadcastAll
 }

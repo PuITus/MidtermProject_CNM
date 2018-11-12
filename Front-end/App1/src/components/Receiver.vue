@@ -135,8 +135,6 @@ export default {
                     payload: { Token: Token }
                     };
             this.send(JSON.stringify(msg));
-            
-
             //Data khi push request lên
           
           }

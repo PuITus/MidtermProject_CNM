@@ -2,7 +2,16 @@
 <template>
 
 <section class="login-block">
+
+
+          
+
+
+
+
+
     <div class="container">
+
   <div class="row">
     <div class="col-md-4 login-sec">
         <h2 class="text-center">Uber System - Login</h2>
@@ -209,4 +218,37 @@ export default {
 .banner-text h2{color:#fff; font-weight:600;}
 .banner-text h2:after{content:" "; width:100px; height:5px; background:#FFF; display:block; margin-top:20px; border-radius:3px;}
 .banner-text p{color:#fff;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>

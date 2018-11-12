@@ -111,7 +111,7 @@ if (!socketServer) {
                     }
                     requestRepo.add(requestEntity).then(value=>
                         {
-                            // DVVws.addUnlocatedRequest(requestEntity);
+                            DVVws.addUnlocatedRequest(); 
                         });
                         var msg = {
                             type: 'success',

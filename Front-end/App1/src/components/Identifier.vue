@@ -4,6 +4,21 @@
 
 
 <div id="identifier" class="container  mt-5" >
+<div v-if="loader" id="dim">
+</div>
+<div v-if="loader" id="loader">
+   <div  class="col-md-12 load">
+        <button  style="width:100%"  type="button" class=" alert alert-primary load">Waiting for new request!</button>
+      </div>
+    <div class="col-md-12 load">
+
+    <img width="300px" src="https://media.giphy.com/media/Z56N0q0tsFC2k/giphy.gif" alt="aa">
+</div>
+       <div class="col-md-12 load">
+         <button  v-on:click="logout"type="button" class=" col-md-12 btn btn-danger">Quit</button>
+      </div>
+  </div>
+
 
     <div class="row" >
       <div class="col-md-6 maps" >
@@ -114,20 +129,20 @@ export default {
         longitude: 0},
         map: null,
         marker:null,
-        count: 0
+        count: 0,
+        loader:true
   }
   } ,
   methods: {
     logout: function (event) {
       this.$root.auth = false;
-
       this.$root.ws.close();
       this.$root.ws = false;
       this.$router.push('login');
     },
 
       sendAttitude:  function () 
-      {
+      {  this.loader=true;
         var ws = this.$root.ws;
         var request = this.request
         var a = setInterval(function(){
@@ -140,7 +155,6 @@ export default {
           payload: { Latitude: request.latitude,Longitude: request.longitude }
           };
           ws.send(JSON.stringify(msg));
-          
             clearInterval(a);
           }
           else
@@ -190,8 +204,9 @@ export default {
             var type=msg.type;
                         switch(type){
                 case "success":
+                    if(data.Request)
+                    {
                     vm.count++;
-
                    vm.successrq =   vm.request;
                    vm.request.Name = data.Request.Name;
                    vm.request.Phone=data.Request.Phone;
@@ -204,6 +219,26 @@ export default {
                     vm.success =true;;
                      setTimeout(function (){ vm.success =false; }, 3000);
                    }
+                   vm.loader=false;
+                    }
+                    else
+                    {
+                    vm.successrq =   vm.request;
+                   vm.request.Name = "";
+                   vm.request.Phone= "";
+                   vm.request.Adress= "";
+                    vm.request.rAdress= "";
+                   vm.request.Note= "";
+                   vm.request.latitude = 0;
+                   vm.request.longitude = 0;
+                   if(vm.count!=1) {
+                    vm.success =true;;
+                     setTimeout(function (){ vm.success =false; }, 3000);
+                   }
+                    }
+
+
+
                    break;
                 default:
                 break;
@@ -368,6 +403,50 @@ export default {
     height: 500px;      
           }   
 }
+
+
+
+
+
+
+
+
+
+
+
+#dim{
+  padding-top:5%;
+color:blue;
+            height:100%;
+            width:100%;
+            position:fixed;
+            left:0;
+            top:0;
+            z-index:16 !important;
+            background-color:black;
+            filter: alpha(opacity=80); 
+-khtml-opacity: 0.80;     
+-moz-opacity: 0.80;      
+opacity: 0.80;          
+}
+
+#loader{
+   border-radius: 10px;
+   padding:10px;  
+background: white ; 
+  color:white;
+  left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+  position: fixed;
+ z-index:17!important;
+
+}
+.load{
+  margin:0px!important;
+  padding:0px!important;
+}
+
 
 
 </style>

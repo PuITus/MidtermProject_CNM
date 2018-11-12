@@ -8,7 +8,7 @@
              <div class="float-right">
                <div  class="alert alert-default">Hello 
   <strong>{{this.$root.auth.user.Name}} !!!</strong> 
-    <button  v-on:click="logout"type="button" class="btn btn-danger">Logout</button>
+    <button  v-on:click="logout" type="button" class="btn btn-danger">Logout</button>
 </div>
             
   
@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <textarea v-model="request.Adress" name="txtAdress" class="form-control" placeholder="Request adress *" style="width: 100%; height: 150px;"required></textarea>
+                            <textarea v-model="request.Adress" name="txtAdress" class="form-control" placeholder="Request adress *" style="width: 100%; height: 150px;" required></textarea>
                         </div>
                     
                     </div>
@@ -45,8 +45,8 @@
                        <transition name="fade">
                           <div id="notifications" v-if="success" class=" alert alert-success">
                        
-                            <strong>Success!</strong> </br>
-                          <strong>Name: </strong> {{successrq.Name}}                          <strong>Adress: </strong> {{successrq.Adress}}</br>
+                            <strong>Success!</strong> <br>
+                          <strong>Name: </strong> {{successrq.Name}}                          <strong>Adress: </strong> {{successrq.Adress}}<br>
                         </div>
                          </transition>
                     </div>

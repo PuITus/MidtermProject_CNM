@@ -39,6 +39,70 @@
     <button  v-on:click="logout" type="button" class="btn btn-danger">Logout</button>
 </div>
             
+  
+                     </div>
+
+        <h2 class="text-uppercase mt-3 font-weight-bold ">Location identifier</h2>
+        <form  @submit.prevent="sendAttitude">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                 <label for="Name">Name :</label>
+                <input id="Name" v-model="request.Name" type="text" class="form-control" placeholder="Name" required readonly>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                 <label for="Name">Phone :</label>
+                <input v-model="request.Phone" type="text" class="form-control " placeholder="Phone" required readonly>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                 <label for="Name">Latitude :</label>
+                <input v-model="request.latitude" type="text" class="form-control " placeholder="latitude" required readonly>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                 <label for="Name">Longitude :</label>
+                <input v-model="request.longitude" type="text" class="form-control" placeholder="longitude" required readonly>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                 <label for="Name">Adress :</label>
+                <textarea v-model="request.Adress" class="form-control" placeholder="Adress" rows="2" required readonly></textarea>
+              </div>
+            </div>
+             <div class="col-12">
+              <div class="form-group">
+                 <label for="Name">Revesed adress :</label>
+                <textarea v-model="request.rAdress" class="form-control" placeholder="Adress" rows="2" required readonly></textarea>
+              </div>
+            </div>
+           
+            <div class="col-12">
+              <button class="btn btn-primary" type="submit">Invia</button>
+            </div>
+            <transition name="fade">
+                          <div id="notifications" v-if="success" class=" alert alert-success">
+                       
+                            <strong>Success!</strong> <br>
+                          <strong>Name: </strong> {{successrq.Name}}                          
+                          <strong>Adress: </strong> {{successrq.Adress}}<br>
+                        </div>
+                         </transition>
+          </div>
+        </form>
+       
+      </div>
+
+    </div>
+</div>
+
+
+
       
 </template>
 
@@ -68,6 +132,70 @@ export default {
         count: 0,
         loader:true
   }
+  } ,
+  methods: {
+    logout: function (event) {
+      this.$root.auth = false;
+      this.$root.ws.close();
+      this.$root.ws = false;
+      this.$router.push('login');
+    },
+
+      sendAttitude:  function () 
+      {  this.loader=true;
+        var ws = this.$root.ws;
+        var request = this.request
+        var a = setInterval(function(){
+        
+          if(ws.readyState == 1)
+          {
+          console.log("Ready for user!");
+          var msg = {
+          type: 'push',
+          payload: { Latitude: request.latitude,Longitude: request.longitude }
+          };
+          ws.send(JSON.stringify(msg));
+            clearInterval(a);
+          }
+          else
+          {
+              console.log("loading...");
+                  console.log(ws.readyState);
+          }     
+        }, 500);
+      }
+
+  },
+   created()
+    {
+      if(this.$root.auth == false)
+      {
+        alert("Please login first!!");
+         this.$router.push('login');
+      }
+    },
+    mounted()
+    {
+        var vm=this;
+
+
+
+      window.WebSocket = window.WebSocket || window.MozWebSocket;
+           var ws = new WebSocket('ws://localhost:3002');
+          var Token = this.$root.auth.access_token;
+          ws.onopen = function() {
+            console.log('connected');
+            //Data khi authen
+                    var msg = {
+                    type: 'authenticate',
+                    payload: { Token: Token }
+                    };
+            this.send(JSON.stringify(msg));
+            
+
+            //Data khi push request lên
+          
+          }
 
          ws.onclose = function(){};
           ws.onmessage = function(e) {

@@ -1,0 +1,223 @@
+
+<template>
+
+<section class="login-block">
+
+
+          
+
+
+
+
+
+    <div class="container">
+
+  <div class="row">
+    <div class="col-md-4 login-sec">
+        <h2 class="text-center">Uber System - Login</h2>
+        <form @submit.prevent="doLogin" class="login-form">
+  <div class="form-group">
+    <label class="text-uppercase">Username</label>
+    <input  v-model="username"  type="text" class="form-control" placeholder="">
+    
+  </div>
+  <div class="form-group">
+    <label class="text-uppercase">Password</label>
+    <input v-model="password"  type="password" class="form-control" placeholder="">
+  </div>
+  <div v-if="fail" class="alert alert-danger">
+  <strong>Oops!</strong> {{error}}
+</div>
+  
+    <div class="form-check">
+   
+    <button id="submit-btn" type="submit" class=" btn btn-login col-md-offset-4 col-md-4">Login</button>
+  </div>
+  
+</form>
+
+</div>
+</section>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+export default {
+  name: 'login-box',
+  data () {
+    return {  username: '',
+      error: '',
+      password: '',
+      hidePassword: true,
+      fail: false,
+      msg: 'Welcome to Your Vue.js App'
+    }
+  },
+  computed: {
+      passwordType() {
+        return this.hidePassword ? 'password' : 'text'
+      },
+      passwordIcon() {
+        return this.hidePassword ? 'fa-eye' : 'fa-eye-slash'
+      }
+    },
+      methods: {
+        test()
+        {
+    console.log($("#submit-btn").html());
+     
+        },
+         doLogin(event)
+         {
+          var auth;
+         if(this.password =="1") alert("ok");
+           $.ajax({
+                    url : "http://localhost:3000/api/users/login",
+                    type : "post",
+                    dataType:"json",
+                    data : {
+                         user : this.username,
+                         pwd: this.password
+                    },
+                    success : function (result){
+                      auth = result;
+                    }
+                }).then(value=>
+                {
+                  if(auth.auth)
+                  {
+                    switch(auth.user.AccountType_ID)
+                    {
+                      case 1:
+                                        this.$root.auth = auth;
+                                        this.fail = false;
+                                        this.$router.push('Receiver');
+                                        break;
+                      case 2:
+                                        this.$root.auth = auth;
+                                        this.fail = false;
+                                        this.$router.push('Identifier');
+                                        break;
+                      default:
+                      this.error = "Something was wrong, pls login again!"
+                    this.fail = true;
+                    this.username ="";
+                     this.password="";
+                      break;
+                    }            
+                  } else 
+                  {
+                    this.error = "Your infomation was wrong!!"
+                    this.fail = true;
+                  this.username ="";
+                  this.password="";
+                  }
+                });
+         }   
+    },created()
+    {
+      if(this.$root.auth != false)
+      {
+        switch(this.$root.auth .user.AccountType_ID)
+                    {
+                      case 1:
+                                        this.$router.push('Receiver');
+                      case 2:
+                                        this.$router.push('Identifier');
+                      break;
+                      default:
+                      this.error = "Something was wrong, pls login again!"
+                    this.fail = true;
+                    this.username ="";
+                     this.password="";
+                      break;
+                    }            
+
+      };
+
+
+    },
+    mounted()
+    {
+      // console.log($("#submit-btn").html("test"));
+     
+    }
+
+}
+</script>
+
+<style >
+.login-block{
+  margin-top:5%;
+}
+.banner-sec{background:url(https://static.pexels.com/photos/33972/pexels-photo.jpg)  no-repeat left bottom; background-size:cover;  border-radius: 0 10px 10px 0; padding:0;}
+.container{background:#fff; border-radius: 10px; box-shadow:15px 20px 0px rgba(0,0,0,0.1);}
+.carousel-inner{border-radius:0 10px 10px 0;}
+.carousel-caption{text-align:left; left:5%;}
+.login-sec{padding: 50px 30px; position:relative;}
+.login-sec .copy-text{position:absolute; width:80%; bottom:20px; font-size:13px; text-align:center;}
+.login-sec .copy-text i{color:#FEB58A;}
+.login-sec .copy-text a{color:#E36262;}
+.login-sec h2{margin-bottom:30px; font-weight:800; font-size:30px; color: #DE6262;}
+.login-sec h2:after{content:" "; width:100px; height:5px; background:#FEB58A; display:block; margin-top:20px; border-radius:3px; margin-left:auto;margin-right:auto}
+.btn-login{background: #DE6262; color:#fff; font-weight:600; }
+.banner-text{width:70%; position:absolute; bottom:40px; padding-left:20px;}
+.banner-text h2{color:#fff; font-weight:600;}
+.banner-text h2:after{content:" "; width:100px; height:5px; background:#FFF; display:block; margin-top:20px; border-radius:3px;}
+.banner-text p{color:#fff;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>

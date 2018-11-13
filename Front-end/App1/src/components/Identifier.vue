@@ -15,7 +15,7 @@
     <img width="300px" src="https://media.giphy.com/media/Z56N0q0tsFC2k/giphy.gif" alt="aa">
 </div>
        <div class="col-md-12 load">
-         <button  v-on:click="logout"type="button" class=" col-md-12 btn btn-danger">Quit</button>
+         <button  v-on:click="logout" type="button" class=" col-md-12 btn btn-danger">Quit</button>
       </div>
   </div>
 

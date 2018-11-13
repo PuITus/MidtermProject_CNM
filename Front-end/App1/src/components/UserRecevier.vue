@@ -60,7 +60,112 @@
 </div>
 </template>
 
+<script>
+export default {
+  name: 'Receiver',
+  data() {
+    return {
+        request: {Name : "",
+        Phone: "",
+        Note: "",
+        Adress: "",},
+    success: false,
+        successrq:
+        {Name : "",
+        Phone: "",
+        Note: "",
+        Adress: "",}
+  }
+  } ,
+  methods: {
+    logout: function (event) {
+      this.$root.auth = false;
+        this.$root.ws.close();
+      this.$root.ws = false;
+      this.$router.push('login');
+    },
 
+      sendRequest:  function () 
+      {
+        var ws = this.$root.ws;
+        var request = this.request
+        var a = setInterval(function(){
+        
+          if(ws.readyState == 1)
+          {
+          console.log("Ready for user!");
+          var msg = {
+          type: 'push',
+          payload: { Request: {Name:request.Name, Phone:request.Phone,Adress:request.Adress,Note:request.Note} }
+          };
+          ws.send(JSON.stringify(msg));
+          
+            clearInterval(a);
+          }
+          else
+          {
+              console.log("loading...");
+                  console.log(ws.readyState);
+          }     
+        }, 500);
+      }
+
+  },
+   created()
+    {
+      if(this.$root.auth == false)
+      {
+        alert("Please login first!!");
+         this.$router.push('login');
+      }
+    },
+    mounted()
+    {
+          if(this.$root.auth)
+    {
+      var vm = this;
+      window.WebSocket = window.WebSocket || window.MozWebSocket;
+          var ws = new WebSocket('ws://localhost:3001');
+          var Token = this.$root.auth.access_token;
+          ws.onopen = function() {
+            console.log('connected');
+            //Data khi authen
+                    var msg = {
+                    type: 'authenticate',
+                    payload: { Token: Token }
+                    };
+            this.send(JSON.stringify(msg));
+            //Data khi push request lên
+          
+          }
+
+         
+          ws.onmessage = function(e) {
+            var msg = JSON.parse(e.data);
+            var data = msg.payload;
+            var type=msg.type;
+                        switch(type){
+                case "success":
+                   vm.successrq = data.Request;
+                   vm.request.Name ="";
+                   vm.request.Phone="";
+                   vm.request.Adress="";
+                   vm.request.Note="";
+                     vm.success =true;
+                     setTimeout(function (){ vm.success =false; }, 3000);
+                   break;
+                default:
+                break;
+            }
+           
+          }
+          this.$root.ws = ws;
+
+    }
+    
+    }
+}
+</script>
 <!-- styling for the component -->
 <style >
 #notifications {

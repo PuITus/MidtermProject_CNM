@@ -19,6 +19,12 @@ export default {
 <style >
 body{
 background: linear-gradient(to bottom, #FFB88C, #DE6262)  center fixed; 
-
 }
+#user-box
+{
+background: #fff;
+            border: #DCDBD7 1px solid;
+            border-radius: 10px; z-index:99;    position: fixed; right:10px; top: 10px;
+}  
+
 </style>

@@ -4,16 +4,12 @@
             <div class="contact-image">
                 <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
             </div>
-
-             <div class="float-right">
-               <div  class="alert alert-default">Hello 
+<div id="user-box" >
+               <div style="margin-bottom:0;"  class="alert alert-default">Hello 
   <strong>{{this.$root.auth.user.Name}} !!!</strong> 
     <button  v-on:click="logout" type="button" class="btn btn-danger">Logout</button>
 </div>
-            
-  
                      </div>
-  
           
             <form id = "requestfrm" @submit.prevent="sendRequest">
         <div >

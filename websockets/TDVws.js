@@ -101,14 +101,28 @@ if (!socketServer) {
             
             geocoderRepo.getAtitude(data.Request.Adress).then( res =>
                 {
+                    if(res[0])
+                    {
+                        var requestEntity = {
+                            Name: data.Request.Name,
+                            Phone: data.Request.Phone,
+                            Adress: data.Request.Adress,
+                            Note: data.Request.Note,
+                            Latitude: res[0].latitude,
+                            Longitude: res[0].longitude
+                        }
+                    }
+                   else
+                   {
                     var requestEntity = {
                         Name: data.Request.Name,
                         Phone: data.Request.Phone,
                         Adress: data.Request.Adress,
                         Note: data.Request.Note,
-                        Latitude: res[0].latitude,
-                        Longitude: res[0].longitude
+                        Latitude: 0,
+                        Longitude: 0
                     }
+                   }
                     requestRepo.add(requestEntity).then(value=>
                         {
                             DVVws.addUnlocatedRequest(); 

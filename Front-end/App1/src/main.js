@@ -15,14 +15,15 @@ import Hello from './components/Hello'
 import Login from './components/Login'
 import Receiver from './components/Receiver'
 import Identifier from './components/Identifier'
-
+import Driver from './components/Driver'
 //define your routes
 const routes = [
 
 	{ path: '/', component: Login },
   { path: '/login', component: Login },
 	{ path: '/receiver', component: Receiver },
-  { path: '/identifier', component: Identifier }
+  { path: '/identifier', component: Identifier },
+    { path: '/driver', component: Driver }
 ]
 
 // Create the router instance and pass the `routes` option

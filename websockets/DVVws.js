@@ -211,10 +211,7 @@ var addUnlocatedRequest = () =>
             if(rows.length>0)
             {
                 for (var c of socketServer.clients) {
-                    console.log(c.ready);
                     if (c.readyState === WebSocket.OPEN && c.ready==0) {
-                       
-
                         requestRepo.setStatus(rows[0].ID,'1').then(
                             varr => {
                                 c.currentRequest = rows[0].ID;

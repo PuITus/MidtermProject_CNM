@@ -151,6 +151,11 @@ export default {
                                         this.fail = false;
                                         this.$router.push('Identifier');
                                         break;
+                       case 3:
+                                        this.$root.auth = auth;
+                                        this.fail = false;
+                                        this.$router.push('Driver');
+                                        break;                  
                       default:
                       this.error = "Something was wrong, pls login again!"
                     this.fail = true;

@@ -28,11 +28,11 @@
 					payload: { Latitude:'40', Longitude: '80',ID: '1' }
 					};
 					ws.send(JSON.stringify(msg));
-					var msg = {
-					type: 'done',
-					payload: { Latitude:'40', Longitude: '80',ID: '1' }
-					};
-					ws.send(JSON.stringify(msg));
+					// var msg = {
+					// type: 'done',
+					// payload: { Latitude:'40', Longitude: '80',ID: '1' }
+					// };
+					// ws.send(JSON.stringify(msg));
   					clearInterval(a);
 			    }
 			    else
@@ -50,7 +50,7 @@
 				//Data khi authen
                 var msg = {
                 type: 'authenticate',
-                payload: { Token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7IklEIjozLCJVc2VybmFtZSI6ImFkbWluMyIsIk5hbWUiOiJhZG1pbjMiLCJQYXNzd29yZCI6IjIxMjMyZjI5N2E1N2E1YTc0Mzg5NGEwZTRhODAxZmMzIiwiQWNjb3VudFR5cGVfSUQiOjMsIlN0YXR1cyI6MX0sImluZm8iOiJtb3JlIGluZm8iLCJpYXQiOjE1NDE3MzM2NjcsImV4cCI6MTU0MTczOTY2N30.ubF0X22gq1yQzMDE9np3wcwMUUUveP7690nWrkPl6v8' }
+                payload: { Token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7IklEIjozLCJVc2VybmFtZSI6ImFkbWluMyIsIk5hbWUiOiJhZG1pbjMiLCJQYXNzd29yZCI6IjIxMjMyZjI5N2E1N2E1YTc0Mzg5NGEwZTRhODAxZmMzIiwiQWNjb3VudFR5cGVfSUQiOjMsIlN0YXR1cyI6MX0sImluZm8iOiJtb3JlIGluZm8iLCJpYXQiOjE1NDIwOTAwODYsImV4cCI6MTU0MjA5NjA4Nn0.zkL8ZjyID_kQ3WBdMnlQV77qydNtwgz4ovvV_i3I0lY' }
                 };
 				ws.send(JSON.stringify(msg));
 				msg = {

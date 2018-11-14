@@ -99,6 +99,10 @@ if (!socketServer) {
           }
         }); })
         .on('standby', function (data) {
+            if(ws.ready==1)
+            {
+                console.log("standby");
+            }
             if(ws.ready==2)
             {
                 console.log("reject and standby");
@@ -114,21 +118,24 @@ if (!socketServer) {
           ws.ready = 0;
         })
         .on('ready', function (data) {
+            
           ws.ready = 1;
           ws.Latitude = data.Latitude;
           ws.Longitude = data.Longitude;
-          console.log("OK");
+          console.log("ready");
           console.log(ws.Latitude);
           console.log(ws.Longitude);
         })
         .on('setAttitude', function (data) {
+            console.log("set Attitude");
+            console.log(data);
             ws.Latitude = data.Latitude;
             ws.Longitude = data.Longitude;
-            if(ws.ready == 0) ws.ready =1;
+           
           })
         .on('reject', function (data) {
             console.log("reject");
-            ws.ready = 1;
+            ws.ready = 0;
             ws.rejectedRequest.push(ws.currentRequest.ID);
             ws.currentRequest.Times++;
             findDriver(ws.currentRequest);
@@ -149,7 +156,7 @@ if (!socketServer) {
             console.log("done");
             requestRepo.setStatus(ws.currentRequest.ID,'4').then(
                 value => {
-                    ws.ready = 1;
+                    ws.ready = 0;
                     ws.currentRequest == null;        
                 });                      
           });  
@@ -204,10 +211,11 @@ var findDriver = request => {
         if(nearest!= null)
         {
             console.log("send request to a driver");
+            
             nearest.currentRequest = request;
             var msg = {
                 type: 'request',
-                payload: { request: request,}};
+                payload: { Request: request,}};
             nearest.send(JSON.stringify(msg));
             nearest.ready = 2;
         }

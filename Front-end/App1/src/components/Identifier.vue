@@ -4,15 +4,31 @@
 
 
 <div id="identifier" class="container  mt-5" >
+
+
+
+
 <div v-if="loader" id="dim">
 </div>
+
+
+<div id ="user-box" >
+               <div style="margin-bottom:0;"  class="alert alert-default">Hello 
+  <strong>{{this.$root.auth.user.Name}} !!!</strong> 
+    <button  v-on:click="logout" type="button" class="btn btn-danger">Logout</button>
+</div>
+                     </div>
+
+
+
+
 <div v-if="loader" id="loader">
-   <div  class="col-md-12 load">
-        <button  style="width:100%"  type="button" class=" alert alert-primary load">Waiting for new request!</button>
+    <div  class="col-md-12 load">
+        <div  style="width:100%;text-align:center;" class=" alert alert-primary load2">Waiting for new request!</div>
       </div>
     <div class="col-md-12 load">
 
-    <img width="300px" src="https://media.giphy.com/media/Z56N0q0tsFC2k/giphy.gif" alt="aa">
+    <img width="350px" src="https://media.giphy.com/media/Z56N0q0tsFC2k/giphy.gif" alt="aa">
 </div>
        <div class="col-md-12 load">
          <button  v-on:click="logout" type="button" class=" col-md-12 btn btn-danger">Quit</button>
@@ -32,15 +48,6 @@
 
       </div>
       <div class="col-md-6">
-
-             <div class="float-right">
-               <div  class="alert alert-default">Hello 
-  <strong>{{this.$root.auth.user.Name}} !!!</strong> 
-    <button  v-on:click="logout" type="button" class="btn btn-danger">Logout</button>
-</div>
-            
-  
-                     </div>
 
         <h2 class="text-uppercase mt-3 font-weight-bold ">Location identifier</h2>
         <form  @submit.prevent="sendAttitude">
@@ -69,6 +76,7 @@
                 <input v-model="request.longitude" type="text" class="form-control" placeholder="longitude" required readonly>
               </div>
             </div>
+           
             <div class="col-12">
               <div class="form-group">
                  <label for="Name">Adress :</label>
@@ -77,13 +85,14 @@
             </div>
              <div class="col-12">
               <div class="form-group">
-                 <label for="Name">Revesed adress :</label>
-                <textarea v-model="request.rAdress" class="form-control" placeholder="Adress" rows="2" required readonly></textarea>
+                 <label for="Name">Note :</label>
+                <textarea v-model="request.Note" class="form-control" placeholder="Note" rows="2" required readonly></textarea>
               </div>
             </div>
            
+           
             <div class="col-12">
-              <button class="btn btn-primary" type="submit">Invia</button>
+              <button class=" col-12 btn btn-success" type="submit">Send</button>
             </div>
             <transition name="fade">
                           <div id="notifications" v-if="success" class=" alert alert-success">
@@ -206,8 +215,15 @@ export default {
                 case "success":
                     if(data.Request)
                     {
-                    vm.count++;
-                   vm.successrq =   vm.request;
+                 
+                          vm.successrq =    {Name : vm.request.Name,
+                Phone: vm.request.Phone,
+                Note: vm.request.Note,
+                Adress: vm.request.Adress,
+                 rAdress: vm.request.rAdress,
+                latitude: vm.request.latitude,
+                longitude: vm.request.longitude};
+
                    vm.request.Name = data.Request.Name;
                    vm.request.Phone=data.Request.Phone;
                    vm.request.Adress=data.Request.Adress;
@@ -215,15 +231,28 @@ export default {
                    vm.request.Note=data.Request.Note;
                    vm.request.latitude = data.Request.Latitude;
                    vm.request.longitude = data.Request.Longitude;
-                   if(vm.count!=1) {
-                    vm.success =true;;
+                   if(vm.count!=0) {
+                    vm.success =true;
                      setTimeout(function (){ vm.success =false; }, 3000);
                    }
+                   vm.count++;
                    vm.loader=false;
                     }
                     else
                     {
-                    vm.successrq =   vm.request;
+                          if(vm.count!=0) {
+                    vm.success =true;
+                     setTimeout(function (){ vm.success =false; vm.count=0;}, 3000);
+                   }
+                      vm.successrq =    {Name : vm.request.Name,
+                Phone: vm.request.Phone,
+                Note: vm.request.Note,
+                Adress: vm.request.Adress,
+                 rAdress: vm.request.rAdress,
+                latitude: vm.request.latitude,
+                longitude: vm.request.longitude};
+
+
                    vm.request.Name = "";
                    vm.request.Phone= "";
                    vm.request.Adress= "";
@@ -231,10 +260,7 @@ export default {
                    vm.request.Note= "";
                    vm.request.latitude = 0;
                    vm.request.longitude = 0;
-                   if(vm.count!=1) {
-                    vm.success =true;;
-                     setTimeout(function (){ vm.success =false; }, 3000);
-                   }
+               
                     }
 
 
@@ -443,8 +469,14 @@ transform: translate(-50%, -50%);
 
 }
 .load{
+   max-width:350px;
   margin:0px!important;
   padding:0px!important;
+}
+.load2{
+  max-width:350px;
+  margin:0px!important;
+  padding:10px!important;
 }
 
 

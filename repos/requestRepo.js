@@ -4,6 +4,11 @@ exports.loadAll = () => {
 	var sql = 'select * from requests';
 	return db.load(sql);
 }
+exports.loadAllWithDriver = () =>
+{
+	var sql = 'select requests.ID, requests.Name,  requests.Phone,  requests.Adress,  requests.Note,  requests.Status,  requests.Latitude,  requests.Longitude, requests.Driver_ID, requests.Driver_lng, requests.Driver_lat, users.Name as Driver_name  from requests LEFT JOIN users ON requests.Driver_ID=users.ID';
+	return db.load(sql);
+}
 exports.getUnlocated = () => {
 	var sql = 'select * from requests where Status = 0 limit 1';
 	return db.load(sql);
@@ -14,10 +19,10 @@ exports.setStatus = (ID,Status) => {
 SET Status = '${Status}' WHERE ID = '${ID}';`;
 	return db.load(sql);
 }
-exports.setDriver = (ID,Driver_ID) => {
+exports.setDriver = (ID,Driver_ID,Driver_lat,Driver_lng) => {
 	var sql = `
     UPDATE requests
-SET Status = '3', Driver_ID = '${Driver_ID}' WHERE ID = '${ID}';`;
+SET Status = '3', Driver_ID = '${Driver_ID}', Driver_lat = '${Driver_lat}',Driver_lng = '${Driver_lng}' WHERE ID = '${ID}';`;
 	return db.load(sql);
 }
 exports.load = () => {

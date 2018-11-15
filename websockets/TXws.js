@@ -144,7 +144,7 @@ if (!socketServer) {
             console.log("accept");
             ws.ready = 3;
             ws.currentRequest.Times++;
-            requestRepo.setDriver(ws.currentRequest.ID,ws.user.ID).then(
+            requestRepo.setDriver(ws.currentRequest.ID,ws.user.ID,ws.Latitude,ws.Longitude).then(
                 value => {
                     var Data = {
                         Request : ws.currentRequest

@@ -199,13 +199,15 @@ export default {
         marker:null,
         markerrq:null,
         count: 0,
-        loader:true,
+        loader:false,
         pos: false,
         ask: false,
         ready: false,
         directionsService: null,
         directionsDisplay: null,
-        reject: false
+        reject: false,
+        infowindow: null,
+        infowindowrq:null
 
 
   }
@@ -298,7 +300,8 @@ export default {
       calculateAndDisplayRoute:  function () {
           var vm =this;
           var origin = vm.marker.getPosition();
-        var des = new google.maps.LatLng(vm.askingrq.Latitude, vm.askingrq.Longitude);
+        var des = vm.markerrq.getPosition();
+        
         vm.directionsService.route({
           origin: origin,
           destination: des,
@@ -306,6 +309,7 @@ export default {
         }, function(response, status) {
           if (status === 'OK') {
             vm.directionsDisplay.setDirections(response);
+            vm.directionsDisplay.setMap(vm.map);
           } else {
             window.alert('Directions request failed due to ' + status);
           }
@@ -363,7 +367,11 @@ export default {
               // setting Latitude & Longitude as title of the marker
               // title is shown when you hover over the marker
               title: this.request.Adress
-            });    
+            });  
+          this.infowindowrq =  new google.maps.InfoWindow({
+                content: "Pick your customer here!"
+                  });
+              vm.infowindowrq.open(vm.map, vm.markerrq);  
           this.calculateAndDisplayRoute();
       },
        sendDone:  function () 
@@ -383,8 +391,10 @@ export default {
           this.$root.ws.send(JSON.stringify(msg));
            this.turnOff();
         this.success =true;
+          setTimeout(function (){ vm.success = false;}, 3000);
         vm.markerrq.setMap(null);
-        setTimeout(function (){ this.success =false; }, 3000);
+        this.directionsDisplay.setMap(null);
+      
       },
       sendReject:  function () 
       {  
@@ -441,33 +451,6 @@ export default {
                         switch(type){
 
 
-
-                case "success":
-                    if(data.Request)
-                    {
-                          vm.successrq =    {Name : vm.request.Name,
-                Phone: vm.request.Phone,
-                Note: vm.request.Note,
-                Adress: vm.request.Adress,
-                 rAdress: vm.request.rAdress,
-                Latitude: vm.request.Latitude,
-                Longitude: vm.request.Longitude};
-
-                   vm.request.Name = data.Request.Name;
-                   vm.request.Phone=data.Request.Phone;
-                   vm.request.Adress=data.Request.Adress;
-                    vm.request.rAdress=data.Request.Adress;
-                   vm.request.Note=data.Request.Note;
-                   vm.request.Latitude = data.Request.Latitude;
-                   vm.request.Longitude = data.Request.Longitude;
-                   if(vm.count!=0) {
-                    vm.success =true;
-                     setTimeout(function (){ vm.success =false; }, 3000);
-                   }
-                   vm.count++;
-                   vm.loader=false;
-                    }
-                   break;
 
 
 
@@ -532,6 +515,8 @@ export default {
         vm.directionsService = new google.maps.DirectionsService;
         vm.directionsDisplay = new google.maps.DirectionsRenderer;
            vm.directionsDisplay.setMap(vm.map);
+           vm.directionsDisplay.setOptions( { suppressMarkers: true } );
+
             vm.map = new google.maps.Map(document.getElementById('map'), {
               center: myLatLng,
               zoom: 19,
@@ -556,6 +541,10 @@ export default {
                                   title: "You are here!"
                                 });    
                         vm.map.setCenter(pos);
+                      vm.infowindow =  new google.maps.InfoWindow({
+                        content: "You are here!"
+                      });
+                      vm.infowindow.open(vm.map, vm.marker);
                       }, function() {
                         handleLocationError(true, infoWindow, map.getCenter());
                       });
@@ -596,7 +585,8 @@ export default {
                             };
                         ws.send(JSON.stringify(msg));
 
-                        vm.marker.setPosition(pos);                      
+                        vm.marker.setPosition(pos);
+
                         }
                       });
                     }              
@@ -605,15 +595,8 @@ export default {
                    vm.marker.setPosition({lat:vm.request.Latitude,lng:vm.request.Longitude});
             });
             
-            vm.marker = new google.maps.Marker({
-              position: myLatLng,
-              map: vm.map,
-              //title: 'Hello World'
-              
-              // setting Latitude & Longitude as title of the marker
-              // title is shown when you hover over the marker
-              title: vm.request.Adress
-            });    
+      
+
             
 
         }

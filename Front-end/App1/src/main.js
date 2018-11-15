@@ -9,13 +9,16 @@ import VueRouter from 'vue-router'
 //tell vue to use the router
 Vue.use(VueRouter)
 /* eslint-disable no-new */
+import Vue2Filters from 'vue2-filters'
 
+Vue.use(Vue2Filters)
 
 import Hello from './components/Hello'
 import Login from './components/Login'
 import Receiver from './components/Receiver'
 import Identifier from './components/Identifier'
 import Driver from './components/Driver'
+import Manager from './components/Manager'
 //define your routes
 const routes = [
 
@@ -23,7 +26,8 @@ const routes = [
   { path: '/login', component: Login },
 	{ path: '/receiver', component: Receiver },
   { path: '/identifier', component: Identifier },
-    { path: '/driver', component: Driver }
+    { path: '/driver', component: Driver },
+    { path: '/manager', component: Manager }
 ]
 
 // Create the router instance and pass the `routes` option

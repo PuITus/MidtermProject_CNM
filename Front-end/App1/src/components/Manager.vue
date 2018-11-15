@@ -1,6 +1,7 @@
 <template>
 
 <div class="container-fluid">
+
     <div class="panel panel-success">
       <div class="panel-heading">
         <div class="row">
@@ -17,56 +18,40 @@
               <th class="text-center"> No. </th>
               <th class="text-center"> Name </th>
               <th class="text-center"> Phone </th>
-              <th width ="30%" sclass="text-center"> Adress </th>
+              <th width ="20%" class="text-center"> Adress </th>
+              <th class="text-center"> Attitude </th>
               <th class="text-center"> Note </th>
               <th class="text-center"> Status </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr class="edit" id="detail">
-              <td id="no" class="text-center"> 1 </td>
-              <td id="name" class="text-center"> ABC </td>
-              <td id="mobile" class="text-center"> 5412547854 </td>
-              <td id="mail" class="text-center"> abc@gmail.com </td>
-              <td id="city" class="text-center"> New York </td>
-                 <td class="text-center">  </td>
-            </tr>
-
-            <tr>
-              <td class="text-center"> 2 </td>
-              <td class="text-center"> DFG </td>
-              <td class="text-center"> 4025478965 </td>
-              <td class="text-center"> dfg@gmail.com </td>
-              <td class="text-center"> Los Angelos </td>
-                 <td class="text-center">  </td>
-            </tr>
-
-            <tr>
-              <td class="text-center"> 3 </td>
-              <td class="text-center"> XYZ </td>
-              <td class="text-center"> 4102369745 </td>
-              <td class="text-center"> xyz@gmail.com </td>
-              <td class="text-center"> Las Vegas </td>
-                 <td class="text-center">  </td>
-            </tr>
-
-            <tr>
-              <td class="text-center"> 4 </td>
-              <td class="text-center"> JKL </td>
-              <td class="text-center"> 2536541028 </td>
-              <td class="text-center"> jkl@gmail.com </td>
-              <td class="text-center"> California </td>
-               <td class="text-center">  </td>
-            </tr>
-
-            <tr>
-              <td class="text-center"> 5 </td>
-              <td class="text-center"> DFG </td>
-              <td class="text-center"> 4025478965 </td>
-              <td class="text-center"> dfg@gmail.com </td>
-              <td class="text-center"> Los Angelos </td>
-                 <td class="text-center">  </td>
+    
+            <tr v-for="request in orderBy(requests,'ID',-1)">
+              <td class="text-center">{{request.ID}}</td>
+              <td class="text-center">{{request.Name}}</td>
+              <td class="text-center">{{request.Phone}}</td>
+              <td class="text-center">{{request.Adress}}</td>
+              <td class="text-center">{{request.Latitude}}, {{request.Longitude}} </td>
+              <td class="text-center">{{request.Note}}</td>
+                 <td v-if="request.Status==0" class="text-center">
+                  <span class="badge badge-light">New</span>
+                 </td>
+                 <td v-if="request.Status==1" class="text-center">
+                  <span class="badge badge-primary">identifying</span>
+                 </td>
+                   <td v-if="request.Status==2" class="text-center">
+                  <span class="badge badge-primary">Finding driver</span>
+                 </td>
+                  <td v-if="request.Status==3" class="text-center">
+                  <span class="badge badge-warning">On the road</span>
+                 </td>
+                 <td v-if="request.Status==4" class="text-center">
+                  <span class="badge badge-success">Finished</span>
+                 </td>
+                 <td v-if="request.Status==5" class="text-center">
+                  <span class="badge badge-danger">No driver</span>
+                 </td>
             </tr>
           </tbody>
         </table>
@@ -82,10 +67,7 @@ export default {
   name: 'Receiver',
   data() {
     return {
-        request: {Name : "",
-        Phone: "",
-        Note: "",
-        Adress: "",},
+        requests: null,
     success: false,
         successrq:
         {Name : "",
@@ -100,33 +82,7 @@ export default {
         this.$root.ws.close();
       this.$root.ws = false;
       this.$router.push('login');
-    },
-
-      sendRequest:  function () 
-      {
-        var ws = this.$root.ws;
-        var request = this.request
-        var a = setInterval(function(){
-        
-          if(ws.readyState == 1)
-          {
-          console.log("Ready for user!");
-          var msg = {
-          type: 'push',
-          payload: { Request: {Name:request.Name, Phone:request.Phone,Adress:request.Adress,Note:request.Note} }
-          };
-          ws.send(JSON.stringify(msg));
-          
-            clearInterval(a);
-          }
-          else
-          {
-              console.log("loading...");
-                  console.log(ws.readyState);
-          }     
-        }, 500);
-      }
-
+    }
   },
    created()
     {
@@ -142,7 +98,7 @@ export default {
     {
       var vm = this;
       window.WebSocket = window.WebSocket || window.MozWebSocket;
-          var ws = new WebSocket('ws://localhost:3001');
+          var ws = new WebSocket('ws://localhost:3004');
           var Token = this.$root.auth.access_token;
           ws.onopen = function() {
             console.log('connected');
@@ -158,6 +114,7 @@ export default {
 
          
           ws.onmessage = function(e) {
+
             var msg = JSON.parse(e.data);
             var data = msg.payload;
             var type=msg.type;
@@ -171,10 +128,14 @@ export default {
                      vm.success =true;
                      setTimeout(function (){ vm.success =false; }, 3000);
                    break;
+                case "init":
+                    vm.requests = data.Request;
+                    console.log(vm.requests);
+                    break;
                 default:
                 break;
             }
-           
+           console.log(e);
           }
           this.$root.ws = ws;
 

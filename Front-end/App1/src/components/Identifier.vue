@@ -139,7 +139,8 @@ export default {
         map: null,
         marker:null,
         count: 0,
-        loader:true
+        loader:true,
+        infowindow: null
   }
   } ,
   methods: {
@@ -275,6 +276,7 @@ export default {
               vm.map.setCenter(myLatLng);
             vm.marker.setPosition(myLatLng); 
                    vm.marker.setTitle(vm.request.Adress); 
+                   vm.infowindow.setContent("Requested location");
           }
           this.$root.ws = ws;
 
@@ -287,7 +289,9 @@ export default {
             
             var myLatLng = {lat: latitude, lng: longitude};
              var geocoder = new google.maps.Geocoder;
-
+            vm.infowindow =  new google.maps.InfoWindow({
+              content: name
+            });
             vm.map = new google.maps.Map(document.getElementById('map'), {
               center: myLatLng,
               zoom: 14,
@@ -305,8 +309,8 @@ export default {
                         if (status === 'OK') {
             if (results[0]) {
               vm.request.rAdress=results[0].formatted_address;
-              infowindow.setContent(results[0].formatted_address);
-              infowindow.open(map, vm.marker);
+              vm.infowindow.setContent(results[0].formatted_address);
+              vm.infowindow.open(map, vm.marker);
 
               
             } else {

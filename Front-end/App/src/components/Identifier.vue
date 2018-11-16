@@ -4,10 +4,6 @@
 
 
 <div id="identifier" class="container  mt-5" >
-
-
-
-
 <div v-if="loader" id="dim">
 </div>
 

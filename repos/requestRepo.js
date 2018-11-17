@@ -41,9 +41,7 @@ SET Latitude = '${Latitude}', Longitude = '${Longitude}',Status = 2 WHERE ID = '
     return db.insert(sql);
 }
 exports.add = requestEntity => {
-
-
-    var sql = `insert into requests(Name, Phone, Adress, Note, Status,Latitude, Longitude) values('${requestEntity.Name}', '${requestEntity.Phone}','${requestEntity.Adress}','${requestEntity.Note}','0','${requestEntity.Latitude}','${requestEntity.Longitude}')`;
+    var sql = `insert into requests(Name, Phone, Adress, Note, Status,Latitude, Longitude) values('${requestEntity.Name}', '${requestEntity.Phone}','${requestEntity.Adress}','${requestEntity.Note}','0','${requestEntity.Latitude}','${requestEntity.Longitude}');`;
    return db.insert(sql);
 
 }

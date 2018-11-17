@@ -88,7 +88,7 @@ if (!socketServer) {
                         type: 'init',
                         payload: { Request: requests}};
                    ws.send(JSON.stringify(msg));
-                   console.log(requests);
+                  
                 });
               }
             }

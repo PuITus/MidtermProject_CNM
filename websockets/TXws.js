@@ -128,7 +128,7 @@ if (!socketServer) {
         })
         .on('setAttitude', function (data) {
             console.log("set Attitude");
-            console.log(data);
+
             ws.Latitude = data.Latitude;
             ws.Longitude = data.Longitude;
            

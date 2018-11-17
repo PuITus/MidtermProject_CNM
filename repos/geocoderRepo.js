@@ -9,7 +9,7 @@ var options = {
    
 
 
-exports.getAtitude = (Adress) => {
+exports.getAttitude = (Adress) => {
     var geocoder = NodeGeocoder(options);
     return geocoder.geocode(Adress);
 }

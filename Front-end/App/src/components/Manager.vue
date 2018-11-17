@@ -2,6 +2,15 @@
 
 <div class="container-fluid">
 
+<div id="user-box" >
+               <div style="margin-bottom:0;"  class="alert alert-default">Hello 
+  <strong>{{this.$root.auth.user.Name}} !!!</strong> 
+    <button  v-on:click="logout" type="button" class="btn btn-danger">Logout</button>
+</div>
+                     </div>
+
+
+
     <div class="panel panel-success">
       <div class="panel-heading">
         <div class="row">
@@ -27,7 +36,7 @@
 
           <tbody>
     
-            <tr v-for="request in orderBy(requests,'ID',-1)">
+            <tr v-for="request in orderBy(requests,'ID',-1)" :key="request.ID">
               <td class="text-center">{{request.ID}}</td>
               <td class="text-center">{{request.Name}}</td>
               <td class="text-center">{{request.Phone}}</td>
@@ -64,7 +73,7 @@
 
 <script>
 export default {
-  name: 'Receiver',
+  name: 'Manager',
   data() {
     return {
         requests: null,
@@ -130,12 +139,14 @@ export default {
                    break;
                 case "init":
                     vm.requests = data.Request;
-                    console.log(vm.requests);
                     break;
+                case "push":
+                    vm.requests.push(data.Request);
+                  break;
                 default:
                 break;
             }
-           console.log(e);
+            console.log(e);
           }
           this.$root.ws = ws;
 

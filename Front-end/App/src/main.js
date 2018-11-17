@@ -13,7 +13,6 @@ import Vue2Filters from 'vue2-filters'
 
 Vue.use(Vue2Filters)
 
-import Hello from './components/Hello'
 import Login from './components/Login'
 import Receiver from './components/Receiver'
 import Identifier from './components/Identifier'

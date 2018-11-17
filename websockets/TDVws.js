@@ -4,10 +4,12 @@ var Auth = require('../repos/authRepo');
 var requestRepo = require('../repos/requestRepo');
 var geocoderRepo = require('../repos/geocoderRepo');
 var DVVws = require('./DVVws');
+var Mws = require('./Mws');
 var SOCKET_PORT = 3001;
 var socketServer;
 var clients = 0;
 var maxClient = Config.TDV;
+
 
 if (!socketServer) {
     socketServer = new WebSocket.Server({
@@ -99,22 +101,25 @@ if (!socketServer) {
 
           try {
             
-            geocoderRepo.getAtitude(data.Request.Adress).then( res =>
+            geocoderRepo.getAttitude(data.Request.Adress).then( res =>
                 {
                     if(res[0])
                     {
                         var requestEntity = {
+                         
                             Name: data.Request.Name,
                             Phone: data.Request.Phone,
                             Adress: data.Request.Adress,
                             Note: data.Request.Note,
                             Latitude: res[0].latitude,
-                            Longitude: res[0].longitude
+                            Longitude: res[0].longitude,
+
                         }
                     }
                    else
                    {
                     var requestEntity = {
+            
                         Name: data.Request.Name,
                         Phone: data.Request.Phone,
                         Adress: data.Request.Adress,
@@ -126,6 +131,13 @@ if (!socketServer) {
                     requestRepo.add(requestEntity).then(value=>
                         {
                             DVVws.addUnlocatedRequest(); 
+                            console.log(value.insertId);
+                            requestEntity.ID = value.insertId;
+                            requestEntity.Status = 0;
+                            msg = {
+                                type: 'push',
+                                payload: { Request: requestEntity}}
+                            Mws.broadcastAll(JSON.stringify(msg));
                         });
                         var msg = {
                             type: 'success',
@@ -156,7 +168,7 @@ if (!socketServer) {
 
 var broadcastAll = msg => {
     for (var c of socketServer.clients) {
-    	console.log(c.readyState);
+    
         if (c.readyState === WebSocket.OPEN) {
             c.send(msg);
         }

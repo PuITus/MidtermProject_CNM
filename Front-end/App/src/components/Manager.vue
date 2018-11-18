@@ -143,6 +143,46 @@ export default {
                 case "push":
                     vm.requests.push(data.Request);
                   break;
+                case "updateIdentify":
+                    for(var i = 0;;i++)
+                    {
+                      if(vm.requests[i].ID == data.ID)
+                      {
+                        vm.$set(vm.requests[i],"Latitude", data.Latitude);
+                        vm.$set(vm.requests[i],"Longitude", data.Longitude);
+                        vm.$set(vm.requests[i],"Status", 2);
+                        break;
+                      }
+                    }
+                 
+                  break;
+
+                  case "updateStatus":
+                    for(var i = 0;;i++)
+                    {
+                      if(vm.requests[i].ID == data.ID)
+                      {
+                        vm.$set(vm.requests[i],"Status", data.Status);
+                        break;
+                      }
+                    }
+                 
+                  break;
+                   case "updateDriver":
+                    for(var i = 0;;i++)
+                    {
+                      if(vm.requests[i].ID == data.ID)
+                      {
+                        vm.$set(vm.requests[i],"Status", 3);
+                        vm.$set(vm.requests[i],"Driver_lat", data.Driver_lat);
+                        vm.$set(vm.requests[i],"Driver_lng", data.Driver_lng);
+                         vm.$set(vm.requests[i],"Driver_name", data.Driver_name);
+                        vm.$set(vm.requests[i],"Driver_ID", data.Driver_ID);
+                        break;
+                      }
+                    }
+                 
+                  break;
                 default:
                 break;
             }

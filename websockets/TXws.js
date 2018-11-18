@@ -4,6 +4,7 @@ var Auth = require('../repos/authRepo');
 const haversine = require('haversine');
 var requestRepo = require('../repos/requestRepo');
 var geocoderRepo = require('../repos/geocoderRepo');
+var Mws = require('./Mws');
 var SOCKET_PORT = 3003;
 var socketServer;
 var clients = 0;
@@ -58,6 +59,7 @@ if (!socketServer) {
         ws.authenticate = 0;
         ws.Latitude = 0;
         ws.Longitude = 0;
+
         // Kiểm tra đã xác thực chưa 
         const checkA = setTimeout(()=>{
             if(ws.readyState === WebSocket.OPEN)
@@ -141,24 +143,44 @@ if (!socketServer) {
             findDriver(ws.currentRequest);
           })
           .on('accept', function (data) {
+
             console.log("accept");
             ws.ready = 3;
             ws.currentRequest.Times++;
+               var msg= {
+                                type: "updateDriver",
+                                payload: { ID: ws.currentRequest.ID,
+                                  Driver_lat:ws.Latitude,
+                                  Driver_lng:ws.Longitude,
+                                  Driver_name: ws.user.Name,
+                                  Driver_ID: ws.user.ID
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+
             requestRepo.setDriver(ws.currentRequest.ID,ws.user.ID,ws.Latitude,ws.Longitude).then(
                 value => {
                     var Data = {
                         Request : ws.currentRequest
                     }
                     sendSuccess(ws,Data);           
-                });                      
+                }); 
+                    
           })
           .on('done', function (data) {
             console.log("done");
+                var msg= {
+                                type: "updateStatus",
+                                payload: { ID: ws.currentRequest.ID,
+                                 Status: 4
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
             requestRepo.setStatus(ws.currentRequest.ID,'4').then(
                 value => {
                     ws.ready = 0;
                     ws.currentRequest == null;        
-                });                      
+                });                        
           });  
 
         ws.on('close', msg => {
@@ -222,13 +244,32 @@ var findDriver = request => {
         else{
             requestRepo.setStatus(request.ID,'5').then(
                 value => {
-                    console.log("Cant find any drivers");     
+                    console.log("Cant find any drivers");    
+                      var msg= {
+                                type: "updateStatus",
+                                payload: { ID: request.ID,
+                                 Status: 5
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+ 
                 });     
         } 
     }
     else
     requestRepo.setStatus(request.ID,'5').then(
         value => {
+
+
+                          var msg= {
+                                type: "updateStatus",
+                                payload: { ID: request.ID,
+                                 Status: 5
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+
+
             console.log("All drivers rejected this request");
         });  
 }

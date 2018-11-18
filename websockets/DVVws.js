@@ -8,7 +8,7 @@ var socketServer;
 var clients = 0;
 var maxClient = Config.DVV;
 var TXws = require('../websockets/TXws');
- 
+ var Mws = require('../websockets/Mws');
 
 
 if (!socketServer) {
@@ -115,6 +115,14 @@ if (!socketServer) {
                                 console.log("VAN CON!");
                                 requestRepo.setStatus(rows[0].ID,'1').then(
                                     result => {
+                                           var msg= {
+                                type: "updateStatus",
+                                payload: {ID: rows[0].ID,
+                                  Status: 1
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+
                                         ws.currentRequest = rows[0].ID;
                                         var Data = {
                                             Request : rows[0]
@@ -146,12 +154,31 @@ if (!socketServer) {
                         {
                             request[0].Times = 0;
                             TXws.findDriver(request[0]);
+                            var msg= {
+                                type: "updateIdentify",
+                                payload: {ID: request[0].ID,
+                                    Latitude: request[0].Latitude,
+                                    Longitude: request[0].Longitude
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+
+
+
                             requestRepo.getUnlocated().then(rows=>
                                 {
                                     if(rows.length>0)
                                     {
                                         requestRepo.setStatus(rows[0].ID,'1').then(
                                             varr => {
+                                                   var msg= {
+                                type: "updateStatus",
+                                payload: {ID: rows[0].ID,
+                                  Status: 1
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+
                                                 ws.currentRequest = rows[0].ID;
                                                 var Data = {
                                                     Request : rows[0]
@@ -181,7 +208,22 @@ if (!socketServer) {
                
                 requestRepo.setStatus(ws.currentRequest,0).then(
                     value => {
+                           var msg= {
+                                type: "updateStatus",
+                                payload: {ID: rows[0].ID,
+                                  Status: 0
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+
                         addUnlocatedRequest();
+                        var msg= {
+                                type: "updateStatus",
+                                payload: {Status: 0,
+                                    ID: ws.currentRequest
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
                     }
                 );
                 ws.currentRequest = -1;
@@ -214,6 +256,17 @@ var addUnlocatedRequest = () =>
                     if (c.readyState === WebSocket.OPEN && c.ready==0) {
                         requestRepo.setStatus(rows[0].ID,'1').then(
                             varr => {
+                            var msg= {
+                                type: "updateStatus",
+                                payload: {ID: rows[0].ID,
+                                  Status: 1
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+
+
+
+
                                 c.currentRequest = rows[0].ID;
                                 var Data = {
                                     Request : rows[0]

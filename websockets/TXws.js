@@ -190,6 +190,22 @@ if (!socketServer) {
                 ws.currentRequest.Times++;
                 findDriver(ws.currentRequest);
             }
+            if(ws.ready==3)
+            {
+                console.log("done");
+                var msg= {
+                                type: "updateStatus",
+                                payload: { ID: ws.currentRequest.ID,
+                                 Status: 4
+                                }
+                            }
+                            Mws.broadcastAll(JSON.stringify(msg));
+            requestRepo.setStatus(ws.currentRequest.ID,'4').then(
+                value => {
+                    ws.ready = 0;
+                    ws.currentRequest == null;        
+                }); 
+            }
             console.log(`close Driver (${clients} is online)`);
             clearTimeout(checkA);
         });

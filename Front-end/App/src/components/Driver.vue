@@ -359,6 +359,7 @@ export default {
           payload: {request: this.request}
           };
           this.$root.ws.send(JSON.stringify(msg));
+          
           this.markerrq = new google.maps.Marker({
               position: {lat:this.request.Latitude,lng: this.request.Longitude},
               map: this.map,
@@ -627,9 +628,7 @@ export default {
 </script>
 <!-- styling for the component -->
 <style scoped>
-#rq-modal{
-  display:block!important;
-}
+
 .switch {
   position: relative;
   display: inline-block;
@@ -828,6 +827,7 @@ opacity: 0.80;
 
 
 #rq-modal {
+  display:block!important;
    border-radius: 10px;
    padding:10px;  
 background: white ; 

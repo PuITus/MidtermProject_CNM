@@ -1,6 +1,45 @@
 <template>
 
-<div class="container-fluid">
+<div id="top" style="position:relative;" class="container-fluid">
+
+
+
+
+<div v-show="show"  id="dim">
+
+</div>
+           
+
+
+
+
+
+<div v-show="show" v-bind:style="{ top: posY + 'px' }"  id="rq-modal">
+  <div class="row">
+   <div  class="col-md-12 ">
+        <div  style="width:100%;text-align:center;" class="no-margin-top alert alert-primary"><strong>REQUEST DETAIL</strong>
+<br>
+         <strong>Customer:</strong> {{curRq.Name}} 
+         <strong>Adress:</strong> {{curRq.Adress}} <br>
+         <strong>Driver's name:</strong> {{curRq.Driver_name}} 
+         <strong>Driver's location:</strong> {{curRq.Driver_lat}},{{curRq.Driver_lng}}
+
+        </div>
+      </div>
+     <div class="col-md-12 ">
+ <div class="no-margin" id="map" >
+        
+            </div>
+</div>
+   <div class="col-md-12">
+<button v-on:click="closeDetail()" style="width:100%;" type="button" class="no-margin-bot btn btn-danger">Close</button>
+</div>
+</div>
+  </div>
+
+
+
+
 
 <div id="user-box" >
                <div style="margin-bottom:0;"  class="alert alert-default">Hello 
@@ -36,7 +75,7 @@
 
           <tbody>
     
-            <tr v-for="request in orderBy(requests,'ID',-1)" :key="request.ID">
+            <tr v-on:click="showDetail(request)" v-bind:id="request.ID" v-for="request in orderBy(requests,'ID',-1)" :key="request.ID">
               <td class="text-center">{{request.ID}}</td>
               <td class="text-center">{{request.Name}}</td>
               <td class="text-center">{{request.Phone}}</td>
@@ -44,7 +83,7 @@
               <td class="text-center">{{request.Latitude}}, {{request.Longitude}} </td>
               <td class="text-center">{{request.Note}}</td>
                  <td v-if="request.Status==0" class="text-center">
-                  <span class="badge badge-light">New</span>
+                  <span class="badge badge-dark">New</span>
                  </td>
                  <td v-if="request.Status==1" class="text-center">
                   <span class="badge badge-primary">identifying</span>
@@ -76,7 +115,17 @@ export default {
   name: 'Manager',
   data() {
     return {
-        requests: null,
+        requests: null,map:null,marker:null,markerrq:null,directionsDisplay:null,directionsService:null, markerwd:null, markerrqwd:null, show:false,posY:300,
+        curRq: {
+          ID:"",
+          Name:"",
+          Adress:"",
+          Latitude:"",
+          Longitude:"",
+          Driver_name:"",
+          Driver_lat:"",
+          Driver_lng:"",
+          },
     success: false,
         successrq:
         {Name : "",
@@ -86,6 +135,54 @@ export default {
   }
   } ,
   methods: {
+
+    closeDetail: function()
+    {
+       this.show = false; 
+    },
+    showDetail: function(request)
+    {
+
+    
+
+          if(request.Driver_ID!=-1)
+          { 
+              var vm=this;
+          vm.curRq.ID=request.ID;
+          vm.curRq.Latitude = request.Latitude;
+          vm.curRq.Name = request.Name;
+          vm.curRq.Longitude = request.Longitude;
+             vm.curRq.Adress = request.Adress;
+       
+        vm.marker.setPosition({lat: request.Latitude, lng: request.Longitude});
+      vm.curRq.Driver_name = request.Driver_name;
+             vm.curRq.Driver_lat = request.Driver_lat;
+                vm.curRq.Driver_lng = request.Driver_lng;
+            vm.markerrq.setPosition({lat:request.Driver_lat,lng:request.Driver_lng});
+             vm.calculateAndDisplayRoute();
+       
+        vm.show=true;
+        vm.posY = 270 + window.pageYOffset;
+      }
+    },
+       calculateAndDisplayRoute:  function () {
+          var vm =this;
+          var origin = vm.marker.getPosition();
+        var des = vm.markerrq.getPosition();
+        
+        vm.directionsService.route({
+          origin: origin,
+          destination: des,
+          travelMode: 'DRIVING'
+        }, function(response, status) {
+          if (status === 'OK') {
+            vm.directionsDisplay.setDirections(response);
+            vm.directionsDisplay.setMap(vm.map);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+      },
     logout: function (event) {
       this.$root.auth = false;
         this.$root.ws.close();
@@ -103,9 +200,52 @@ export default {
     },
     mounted()
     {
-          if(this.$root.auth)
-    {
+
+ console.log(document.getElementById("map"));
+       
+
+
       var vm = this;
+    vm.map = new google.maps.Map(document.getElementById('map'), {
+              center: {lat:0,lng:0},
+              zoom: 14,
+              disableDoubleClickZoom: true, // disable the default map zoom on double click
+            });
+        vm.directionsService = new google.maps.DirectionsService;
+        vm.directionsDisplay = new google.maps.DirectionsRenderer;
+                               vm.directionsDisplay.setMap(vm.map);
+           vm.directionsDisplay.setOptions( { suppressMarkers: true } );
+            vm.infowindow =  new google.maps.InfoWindow({
+                        content: "You are here!"
+                      });
+                 
+              vm.marker = new google.maps.Marker({
+                                  position: {lat:14,lng:0},
+                                  map: vm.map,
+                                  title: "Driver's location"
+                                });   
+                  vm.markerrq = new google.maps.Marker({
+                                  position: {lat:15,lng:0},
+                                  map: vm.map,
+                                  title: "Customer's location"
+                                });  
+                 vm.markerwd=  new google.maps.InfoWindow({
+              content: "Customer's location"
+            });
+                  vm.markerrqwd= new google.maps.InfoWindow({
+              content: "Driver's location"
+            });
+                       vm.markerwd.open(vm.map, vm.marker);
+                       vm.markerrqwd.open(vm.map, vm.markerrq);
+                vm.calculateAndDisplayRoute();
+
+
+
+
+
+
+
+
       window.WebSocket = window.WebSocket || window.MozWebSocket;
           var ws = new WebSocket('ws://localhost:3004');
           var Token = this.$root.auth.access_token;
@@ -190,14 +330,67 @@ export default {
           }
           this.$root.ws = ws;
 
+
+
+
+
+
     }
-    
+
     }
-}
+
+
 </script>
 <!-- styling for the component -->
-<style > .panel
+<style >
+
+.no-margin
+{
+  margin:0px!important;
+  border-radius:0px;
+}
+.no-margin-top
+{
+  margin:0px!important;
+    border-radius:5px 5px 0px 0px;
+}
+.no-margin-bot
+{
+  margin:0px!important;
+    border-radius:0px 0px 5px 5px;
+}
+#rq-modal {
+  width:80%;
+   border-radius: 10px;
+   padding:10px;  
+background: white ; 
+
+  left: 50%;
+transform: translate(-50%, -50%);
+  position: absolute;
+ z-index:99!important;
+}
+
+
+#dim{
+  padding-top:5%;
+color:blue;
+            height:100%;
+            width:100%;
+            position:fixed;
+            left:0;
+            top:0;
+            z-index:16 !important;
+            background-color:black;
+            filter: alpha(opacity=80); 
+-khtml-opacity: 0.80;     
+-moz-opacity: 0.80;      
+opacity: 0.80;          
+}
+
+ .panel
         {
+          cursor:default;
           margin: 5%;
           background: white;
           border-radius:5px;
@@ -230,4 +423,43 @@ export default {
           background-color: #5bc0de;
           color: white;
         }
+
+
+@media (max-width: 575.98px) {
+
+
+    #map { 
+             width: 100%;
+    height: 450px;      
+          }   
+ }
+
+
+@media (min-width: 576px) {
+
+     #map { 
+             width: 100%;
+    height: 450px;      
+          }   
+ }
+
+@media (min-width: 768px) {
+
+ 
+
+    #map { 
+             width: 100%;
+    height: 450px;      
+          }   
+}
+
+@media (min-width: 992px) {
+ 
+ 
+     #map { 
+             width: 100%;
+    height: 450px;      
+          }   
+}
+
 </style>

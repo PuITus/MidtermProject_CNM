@@ -187,6 +187,7 @@ export default {
       this.$root.auth = false;
         this.$root.ws.close();
       this.$root.ws = false;
+       this.$session.destroy();
       this.$router.push('login');
     }
   },
@@ -323,6 +324,12 @@ export default {
                     }
                  
                   break;
+                          case "error":
+                          vm.$root.auth = false;
+                          vm.$root.ws.close();
+                        vm.$root.ws = false;
+                        vm.$router.push('login');
+                   break;
                 default:
                 break;
             }

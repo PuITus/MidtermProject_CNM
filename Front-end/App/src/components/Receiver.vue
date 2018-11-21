@@ -78,6 +78,7 @@ export default {
       this.$root.auth = false;
         this.$root.ws.close();
       this.$root.ws = false;
+       this.$session.destroy();
       this.$router.push('login');
     },
 
@@ -109,6 +110,10 @@ export default {
   },
    created()
     {
+       if(this.$session.has("auth"))
+       {
+        this.$root.auth = this.$session.get("auth");
+       }
       if(this.$root.auth == false)
       {
         alert("Please login first!!");
@@ -117,6 +122,7 @@ export default {
     },
     mounted()
     {
+    
           if(this.$root.auth)
     {
       var vm = this;
@@ -134,7 +140,12 @@ export default {
             //Data khi push request lên
           
           }
-
+      //   ws.onclose = function() {
+      //        vm.$root.auth = false;
+      //   vm.$root.ws.close();
+      // vm.$root.ws = false;
+      // vm.$router.push('login');    
+      //     }
          
           ws.onmessage = function(e) {
             var msg = JSON.parse(e.data);
@@ -149,6 +160,12 @@ export default {
                    vm.request.Note="";
                      vm.success =true;
                      setTimeout(function (){ vm.success =false; }, 3000);
+                   break;
+                   case "error":
+                        vm.$root.auth = false;
+                          vm.$root.ws.close();
+                        vm.$root.ws = false;
+                        vm.$router.push('login');
                    break;
                 default:
                 break;

@@ -143,21 +143,29 @@ export default {
                     {
                       case 1:
                                         this.$root.auth = auth;
+                                        this.$session.start()
+                                        this.$session.set('auth', auth)
                                         this.fail = false;
                                         this.$router.push('Receiver');
                                         break;
                       case 2:
                                         this.$root.auth = auth;
+                                        this.$session.start()
+                                        this.$session.set('auth', auth)
                                         this.fail = false;
                                         this.$router.push('Identifier');
                                         break;
                        case 3:
                                         this.$root.auth = auth;
+                                        this.$session.start()
+                                        this.$session.set('auth', auth)
                                         this.fail = false;
                                         this.$router.push('Driver');
                                         break;   
                         case 4:
                                         this.$root.auth = auth;
+                                        this.$session.start()
+                                        this.$session.set('auth', auth)
                                         this.fail = false;
                                         this.$router.push('Manager');
                                         break;                
@@ -179,24 +187,94 @@ export default {
          }   
     },created()
     {
-      if(this.$root.auth != false)
+      if(this.$session.has("auth"))
       {
-        switch(this.$root.auth .user.AccountType_ID)
+        var vm = this;
+           $.ajax({
+                    url : "http://localhost:3000/api/users/checkToken",
+                    type : "post",
+                    dataType:"json",
+                    data : {
+                         token:vm.$session.get("auth").access_token
+                    },
+                    success : function (result){
+                      console.log(result);
+                    if(result.error)
+                    {
+
+                        if(result.error.name=="TokenExpiredError")
+                        {
+                                $.ajax({
+                              url : "http://localhost:3000/api/users/refreshToken",
+                              type : "post",
+                              dataType:"json",
+                              data : {
+                                   rfToken:vm.$session.get("auth").refresh_token,
+                                  ID: vm.$session.get("auth").user.ID
+                              },
+                              success : function (result2){
+                                if(result2.auth)
+                                {
+                                      vm.$root.auth = result2;
+                                     vm.$session.remove("auth");
+                                     vm.$session.set("auth",result2);
+                                     switch(vm.$root.auth .user.AccountType_ID)
                     {
                       case 1:
-                                        this.$router.push('Receiver');
+                                        vm.$router.push('Receiver');
+                                        break;
                       case 2:
-                                        this.$router.push('Identifier');
-                      break;
+                                        vm.$router.push('Identifier');
+                                        break;
+                      case 3:
+                                        vm.$router.push('Driver');
+                                        break;
+                       case 4:
+                                        vm.$router.push('Manager');
+                                        break;
                       default:
-                      this.error = "Something was wrong, pls login again!"
-                    this.fail = true;
-                    this.username ="";
-                     this.password="";
+                      vm.error = "Something was wrong, pls login again!"
+                    vm.fail = true;
+                    vm.username ="";
+                     vm.password="";
+                      break;
+                    }           
+                                }
+                                else
+                                {
+                                  vm.$session.destroy();
+                                }
+                              }
+                            });
+                        }
+                      }
+                      else 
+                      {
+                        vm.$root.auth = vm.$session.get("auth");
+                         switch(vm.$root.auth .user.AccountType_ID)
+                    {
+                      case 1:
+                                        vm.$router.push('Receiver');
+                                        break;
+                      case 2:
+                                        vm.$router.push('Identifier');
+                                        break;
+                      case 3:
+                                        vm.$router.push('Driver');
+                                        break;
+                       case 4:
+                                        vm.$router.push('Manager');                                        
+                      default:
+                      vm.error = "Something was wrong, pls login again!"
+                    vm.fail = true;
+                    vm.username ="";
+                     vm.password="";
                       break;
                     }            
-
-      };
+                      } 
+                  }
+                })
+      }
 
 
     },

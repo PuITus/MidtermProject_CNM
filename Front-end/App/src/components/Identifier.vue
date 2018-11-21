@@ -141,6 +141,7 @@ export default {
   } ,
   methods: {
     logout: function (event) {
+      this.$session.destroy();
       this.$root.auth = false;
       this.$root.ws.close();
       this.$root.ws = false;
@@ -174,6 +175,10 @@ export default {
   },
    created()
     {
+       if(this.$session.has("auth"))
+       {
+        this.$root.auth = this.$session.get("auth");
+       }
       if(this.$root.auth == false)
       {
         alert("Please login first!!");
@@ -262,6 +267,12 @@ export default {
 
 
 
+                   break;
+                     case "error":
+                          vm.$root.auth = false;
+                          vm.$root.ws.close();
+                        vm.$root.ws = false;
+                        vm.$router.push('login');
                    break;
                 default:
                 break;

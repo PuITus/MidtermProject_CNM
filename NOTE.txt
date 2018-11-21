@@ -1,8 +1,9 @@
 - ID loại người dùng:
     1 : Tổng đài viên
-    2 : 
-    3 :
-- status request:
+    2 : Dinh vi vien
+    3 : Tai xe
+    4 : Manager
+- status cua mot request:
     0: moi khoi tao
     1: dang dinh vi
     2: da dinh vi

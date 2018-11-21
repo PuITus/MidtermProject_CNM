@@ -5,7 +5,7 @@ var Config = require('../config');
 var db = require('../fn/mysql-db');
 
 const SECRET = 'ABCDEF';
-const AC_LIFETIME = 6000; // seconds
+const AC_LIFETIME = 6; // seconds
 
 exports.generateAccessToken = userEntity => {
     var payload = {
@@ -19,24 +19,20 @@ exports.generateAccessToken = userEntity => {
 
     return token;
 }
-
-exports.verifyAccessToken = (req, res, next) => {
-    var token = req.headers['x-access-token'];
+exports.verifyAccessToken = (req, res) => {
+    var token = req.body.token;
     if (token) {
         jwt.verify(token, SECRET, (err, payload) => {
             if (err) {
-                res.statusCode = 401;
                 res.json({
                     msg: 'INVALID TOKEN',
                     error: err
                 })
             } else {
-                req.token_payload = payload;
-                next();
+                res.json(JSON.stringify(payload));
             }
         });
     } else {
-        res.statusCode = 403;
         res.json({
             msg: 'NO_TOKEN'
         })
@@ -77,3 +73,4 @@ exports.updateRefreshToken = (userId, rfToken) => {
             .catch(err => reject(err));
     });
 }
+

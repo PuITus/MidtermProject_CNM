@@ -14,8 +14,7 @@ exports.getUnlocated = () => {
 	return db.load(sql);
 }
 exports.setStatus = (ID,Status) => {
-	var sql = `
-    UPDATE requests
+	var sql = `UPDATE requests
 SET Status = '${Status}' WHERE ID = '${ID}';`;
 	return db.load(sql);
 }

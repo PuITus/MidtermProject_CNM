@@ -12,6 +12,8 @@ Vue.use(VueRouter)
 import Vue2Filters from 'vue2-filters'
 
 Vue.use(Vue2Filters)
+import VueSession from 'vue-session'
+Vue.use(VueSession,{persist:true})
 
 import Login from './components/Login'
 import Receiver from './components/Receiver'

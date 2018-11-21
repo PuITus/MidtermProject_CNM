@@ -14,6 +14,14 @@ exports.login = loginEntity => {
 	var sql = `select * from users where Username = '${loginEntity.user}' and Password = '${md5_pwd}'`;
 	return db.load(sql);
 }
+exports.get = ID => {
+	var sql = `select * from users where ID = '${ID}'`;
+	return db.load(sql);
+}
+exports.getRftoken = refreshToken => {
+	var sql = `select * from userRefreshTokenExt where User_ID = '${refreshToken.ID}' and rfToken = '${refreshToken.rfToken}'`;
+	return db.load(sql);
+}
 
 
 

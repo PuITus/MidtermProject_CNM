@@ -205,29 +205,30 @@ if (!socketServer) {
         
             if(ws.currentRequest !=-1)
             {
-               
-                requestRepo.setStatus(ws.currentRequest,0).then(
-                    value => {
-                           var msg= {
-                                type: "updateStatus",
-                                payload: {ID: rows[0].ID,
-                                  Status: 0
-                                }
-                            }
-                            Mws.broadcastAll(JSON.stringify(msg));
-
-                        addUnlocatedRequest();
-                        var msg= {
-                                type: "updateStatus",
-                                payload: {Status: 0,
-                                    ID: ws.currentRequest
-                                }
-                            }
-                            Mws.broadcastAll(JSON.stringify(msg));
+               requestRepo.getByID(ws.currentRequest).then(
+rows =>{
+    requestRepo.setStatus(ws.currentRequest,0).then(
+        value => {
+               var msg= {
+                    type: "updateStatus",
+                    payload: {ID: rows[0].ID,
+                      Status: 0
                     }
-                );
-                ws.currentRequest = -1;
-              
+                }
+                Mws.broadcastAll(JSON.stringify(msg));
+
+            addUnlocatedRequest();
+            var msg= {
+                    type: "updateStatus",
+                    payload: {Status: 0,
+                        ID: ws.currentRequest
+                    }
+                }
+                Mws.broadcastAll(JSON.stringify(msg));
+        }
+    );
+    ws.currentRequest = -1;
+})   
             }
             clients--;
             console.log(`close DVV (${clients} is online)`);

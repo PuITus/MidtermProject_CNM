@@ -100,7 +100,7 @@
   </div>
            
 
-        <h2 class="text-uppercase mt-3 font-weight-bold ">Location driver</h2>
+        <h2 class="text-uppercase mt-3 font-weight-bold ">Driver system</h2>
         <form  @submit.prevent="sendAttitude">
           <div class="row">
             <div class="col-lg-6">
@@ -316,6 +316,7 @@ export default {
         });
       },
     logout: function (event) {
+      this.$session.destroy();
       this.$root.auth = false;
       this.$root.ws.close();
       this.$root.ws = false;
@@ -415,6 +416,10 @@ export default {
   },
    created()
     {
+       if(this.$session.has("auth"))
+       {
+        this.$root.auth = this.$session.get("auth");
+       }
       if(this.$root.auth == false)
       {
         alert("Please login first!!");
@@ -494,7 +499,12 @@ export default {
 
                     }
                    break;
-
+                     case "error":
+                        vm.$root.auth = false;
+                          vm.$root.ws.close();
+                        vm.$root.ws = false;
+                        vm.$router.push('login');
+                   break;
 
 
                 default:

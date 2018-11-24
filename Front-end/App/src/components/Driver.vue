@@ -134,10 +134,7 @@
               </div>
             </div>
              <div class="col-12">
-              <div class="form-group">
-                 <label for="Name">Revesed adress :</label>
-                <textarea v-model="request.rAdress" class="form-control" placeholder="Adress" rows="2" required readonly></textarea>
-              </div>
+           
             </div>
            
             <div class="col-12">
@@ -807,7 +804,7 @@ input:checked + .slider:before {
 #dim-half{
   padding-top:5%;
             height:100%;
-            width:99%;
+            width:95%;
             position:absolute;
             z-index:16 !important;
             background-color:black;

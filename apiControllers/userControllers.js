@@ -63,10 +63,6 @@ userRepo.getRftoken({ID:req.body.ID,rfToken: req.body.rfToken}).then(rows =>
 })
 })
 router.post('/login', (req, res) => {
-	// req.body = {
-	// 	user: 'nndkhoa',
-	// 	pwd: 'nndkhoa'
-	// }
 	userRepo.login(req.body)
 		.then(rows => {
 			if (rows.length > 0) {

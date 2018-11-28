@@ -133,9 +133,7 @@
                 <textarea v-model="request.Adress" class="form-control" placeholder="Adress" rows="2" required readonly></textarea>
               </div>
             </div>
-             <div class="col-12">
-           
-            </div>
+
            
             <div class="col-12">
               <button v-on:click ="sendDone" class=" col-12 btn btn-success" >Done</button>
@@ -476,11 +474,13 @@ export default {
                     {
                       
                             vm.ask = false;
+                              vm.ready = false;
                              var msg = {
                             type: "reject",
                             payload: { Request: vm.askingrq}
                             };
                             ws.send(JSON.stringify(msg));
+
                         vm.askingrq.Name = "";
                        vm.askingrq.Phone= "";
                        vm.askingrq.Adress= "";
@@ -489,7 +489,7 @@ export default {
                        vm.askingrq.Latitude = 0;
                        vm.askingrq.Longitude = 0;
                        vm.askingrq.ID == -1;
-                       vm.ready = false;
+                    
                     } }, 10000);
 
 

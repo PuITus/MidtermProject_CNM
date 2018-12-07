@@ -9,20 +9,34 @@ TECHNIQUES :
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
 ### Installing
-
-run 
-
+first, config your database in: ./fn/mysql-db.js
+* you can import my example database file: Uber_Database.sql
 ```
+    	host: 'localhost',
+    	user: 'root',
+    	password: '',
+    	database: 'uber'
+```
+then, install the project
+```
+npm install
+cd Front-end/App
 npm install
 ```
 
 ## Deployment
 
-run 
+To run the back-end (restful server)
 
 ```
+npm start
+```
+
+To run the front-end ()
+
+```
+cd Front-end/App
 npm run dev
 ```

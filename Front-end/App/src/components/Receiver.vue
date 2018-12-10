@@ -122,7 +122,7 @@ export default {
     },
     mounted()
     {
-    
+    document.title = this.$root.auth.user.Name;
           if(this.$root.auth)
     {
       var vm = this;

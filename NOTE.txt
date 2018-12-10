@@ -10,6 +10,7 @@
     3: da duoc accept
     4: done
     5: tim khong thay xe
+    6: picked
 
 
 

@@ -17,7 +17,7 @@
 <div v-show="show" v-bind:style="{ top: posY + 'px' }"  id="rq-modal">
   <div class="row">
    <div  class="col-md-12 ">
-        <div  style="width:100%;text-align:center;" class="no-margin-top alert alert-primary"><strong>REQUEST DETAIL</strong>
+        <div  style="width:100%;text-align:center;" class="no-margin-top  alert-primary"><strong>REQUEST DETAIL</strong>
 <br>
          <strong>Customer:</strong> {{curRq.Name}} 
          <strong>Adress:</strong> {{curRq.Adress}} <br>
@@ -60,6 +60,8 @@
       </div>
 
       <div class="panel-body table-responsive">
+
+
         <table class="table table-hover">
           <thead>
             <tr>
@@ -74,7 +76,11 @@
           </thead>
 
           <tbody>
-    
+                 
+                 
+
+               
+                           
             <tr v-on:click="showDetail(request)" v-bind:id="request.ID" v-for="request in orderBy(requests,'ID',-1)" :key="request.ID">
               <td class="text-center">{{request.ID}}</td>
               <td class="text-center">{{request.Name}}</td>
@@ -100,9 +106,18 @@
                  <td v-if="request.Status==5" class="text-center">
                   <span class="badge badge-danger">No driver</span>
                  </td>
+                 <td v-if="request.Status==6" class="text-center">
+                  <span class="badge badge-warning">Picked</span>
+                 </td>
             </tr>
+              
           </tbody>
+
         </table>
+          <div v-if="norq"  class="no-rq">
+            <img  width="350px"  src="https://i.pinimg.com/originals/e7/f4/29/e7f42936d23eb89d1be3098d6237ab04.gif" alt="aa">
+            <div class="message alert-primary " style="text-align: center">NO REQUEST</div>
+          </div>
       </div>
 
    
@@ -115,6 +130,7 @@ export default {
   name: 'Manager',
   data() {
     return {
+      norq:false,
         requests: null,map:null,marker:null,markerrq:null,directionsDisplay:null,directionsService:null, markerwd:null, markerrqwd:null, show:false,posY:300,
         curRq: {
           ID:"",
@@ -131,7 +147,8 @@ export default {
         {Name : "",
         Phone: "",
         Note: "",
-        Adress: "",}
+        Adress: "",
+        tit: 'My Title'}
   }
   } ,
   methods: {
@@ -142,10 +159,7 @@ export default {
     },
     showDetail: function(request)
     {
-
-    
-
-          if(request.Driver_ID!=-1)
+          if(request.Status==3||request.Status==4||request.Status==6)
           { 
               var vm=this;
           vm.curRq.ID=request.ID;
@@ -195,13 +209,12 @@ export default {
     {
       if(this.$root.auth == false)
       {
-        alert("Please login first!!");
          this.$router.push('login');
       }
     },
     mounted()
     {
-
+ document.title = this.$root.auth.user.Name;
  console.log(document.getElementById("map"));
        
 
@@ -280,9 +293,11 @@ export default {
                    break;
                 case "init":
                     vm.requests = data.Request;
+                    if(data.Request.length == 0 ) vm.norq = true;
                     break;
                 case "push":
                     vm.requests.push(data.Request);
+                    vm.norq=false;
                   break;
                 case "updateIdentify":
                     for(var i = 0;;i++)
@@ -397,10 +412,14 @@ opacity: 0.80;
 
  .panel
         {
+          border-style: solid;
+          border-width: 5px;
+          border-color:white;
+          padding-top:10px;
           cursor:default;
           margin: 5%;
-          background: white;
-          border-radius:5px;
+          background:rgba(255, 255, 255, 0.5);;
+          border-radius:6px;
         }
 
 
@@ -468,5 +487,28 @@ opacity: 0.80;
     height: 450px;      
           }   
 }
+.panel-body
+{
+  min-height: 500px;
+  position: relative;
+}
 
+.no-rq
+{
+  position: absolute;
+left: 50%;
+top: 55%;
+transform: translate(-50%, -50%);
+
+      border-style: solid;
+  border-width: 5px;
+  border-color:white;
+    border-radius: 6px;
+}
+
+.message{
+    text-align: center;
+   padding:8px;
+   font-size:18px;
+}
 </style>
